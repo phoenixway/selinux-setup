@@ -1,3 +1,4 @@
 #!/bin/bash
 
-ls -Z safe1/
+ls -Z /home/roman/selinux-policies/app1/safe1
+
