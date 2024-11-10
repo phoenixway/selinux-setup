@@ -1,36 +1,46 @@
 policy_module(app1, 1.0)
 
-# Оголошення типу для програми
+require {
+    type lib_t;
+    type etc_t;
+    type var_log_t;
+    type unconfined_t;
+    type user_t;
+    type user_home_t;
+}
+
+# ?????????? ?????
 type secure_app_t;
 type secure_app_exec_t;
 application_domain(secure_app_t, secure_app_exec_t)
 
-# Оголошення типу для захищеної директорії
 type secure_app_data_t;
 files_type(secure_app_data_t)
 
-# Дозволи для програми
-allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link list_dir lock open read remove_name reparent rmdir search setattr write };
+# ??????? ???????? ??????
+type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+type_transition user_t secure_app_exec_t:process secure_app_t;
+
+# ??????? ??? ????????
+allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name reparent rmdir search setattr write };
 allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
 
-# Заборона доступу для інших доменів (включаючи root)
-neverallow ~secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link list_dir lock open read remove_name reparent rmdir search setattr write };
-neverallow ~secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
+# ???????? ??????? ??? ?????
+neverallow { domain -secure_app_t } secure_app_data_t:dir { getattr open read search };
+neverallow { domain -secure_app_t } secure_app_data_t:file { getattr open read };
 
-# Базові системні дозволи для роботи програми
+# ?????? ???????
 allow secure_app_t self:process { fork signal_perms };
 allow secure_app_t self:fifo_file rw_fifo_file_perms;
 allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
 
-# Дозволи для бібліотек
 allow secure_app_t lib_t:file { execute read open getattr };
 allow secure_app_t etc_t:file { read open getattr };
 
-# Журналювання
 allow secure_app_t var_log_t:dir { add_name write };
 allow secure_app_t var_log_t:file { create open append };
 
+
 ***
 
-app1.te:26:ERROR 'unknown type lib_t' at token ';' on line 3835:
-
+встановлюється модуль, контекст папки і програми ніби правильний, але я можу читати з терміналу папку яка має бути захищена. як це виправити?

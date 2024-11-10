@@ -3399,460 +3399,293 @@ require {
     type lib_t;
     type etc_t;
     type var_log_t;
+    type unconfined_t;
+    type user_t;
+    type user_home_t;
 }
 
-
-#line 9
-	
-#line 9
-		require {
-#line 9
-			
-#line 9
-    type unconfined_t;
-#line 9
-
-#line 9
-		} # end require
-#line 9
-	
-#line 11
-
-
+# ?????????? ?????
 type secure_app_t;
 type secure_app_exec_t;
+
+# ?????????? ????????? ? ????
+role system_r types secure_app_t;
+
+# ?????????? ??????
  	 	
-#line 15
-##### begin application_domain(secure_app_t,secure_app_exec_t) depth: 1
-#line 15
+#line 20
+##### begin domain_type(secure_app_t) depth: 1
+#line 20
  	
-#line 15
-	 	 	
-#line 15
-##### begin application_type(secure_app_t) depth: 2
-#line 15
- 	
-#line 15
-	
-#line 15
-	
-#line 15
-		require {
-#line 15
-			
-#line 15
-		attribute application_domain_type;
-#line 15
-	
-#line 15
-		} # end require
-#line 15
-	
-#line 15
-
-#line 15
-
-#line 15
-	typeattribute secure_app_t application_domain_type;
-#line 15
-
-#line 15
+#line 20
 	# start with basic domain
-#line 15
+#line 20
 	 	 	
-#line 15
-##### begin domain_type(secure_app_t) depth: 3
-#line 15
+#line 20
+##### begin domain_base_type(secure_app_t) depth: 2
+#line 20
  	
-#line 15
-	# start with basic domain
-#line 15
-	 	 	
-#line 15
-##### begin domain_base_type(secure_app_t) depth: 4
-#line 15
- 	
-#line 15
+#line 20
 	
-#line 15
+#line 20
 	
-#line 15
+#line 20
 		require {
-#line 15
+#line 20
 			
-#line 15
+#line 20
 		attribute domain;
-#line 15
+#line 20
 	
-#line 15
+#line 20
 		} # end require
-#line 15
+#line 20
 	
-#line 15
+#line 20
 
-#line 15
+#line 20
 
-#line 15
+#line 20
 	typeattribute secure_app_t domain;
-#line 15
+#line 20
 
-#line 15
+#line 20
 	 	
-#line 15
-##### end domain_base_type(secure_app_t) depth: 3
-#line 15
+#line 20
+##### end domain_base_type(secure_app_t) depth: 1
+#line 20
  	
-#line 15
+#line 20
 
-#line 15
+#line 20
 	# Only way to get corenet_unlabeled packets disabled to work
-#line 15
+#line 20
 	 	 	
-#line 15
-##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 4
-#line 15
+#line 20
+##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 2
+#line 20
  	
-#line 15
+#line 20
 	
-#line 15
+#line 20
 	
-#line 15
+#line 20
 		require {
-#line 15
+#line 20
 			
-#line 15
+#line 20
                 attribute corenet_unlabeled_type;
-#line 15
+#line 20
 	
-#line 15
+#line 20
 		} # end require
-#line 15
+#line 20
 	
-#line 15
+#line 20
 
-#line 15
+#line 20
 	typeattribute secure_app_t corenet_unlabeled_type;
-#line 15
+#line 20
 
-#line 15
+#line 20
 	 	
-#line 15
-##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 3
-#line 15
+#line 20
+##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 1
+#line 20
  	
-#line 15
+#line 20
 
-#line 15
+#line 20
 	 	
-#line 15
-##### end domain_type(secure_app_t) depth: 2
-#line 15
+#line 20
+##### end domain_type(secure_app_t) depth: 0
+#line 20
  	
-#line 15
-
-#line 15
-	 	
-#line 15
-##### end application_type(secure_app_t) depth: 1
-#line 15
+ 	 	
+#line 21
+##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
+#line 21
  	
-#line 15
-	 	 	
-#line 15
-##### begin application_executable_file(secure_app_exec_t) depth: 2
-#line 15
- 	
-#line 15
+#line 21
 	
-#line 15
+#line 21
 	
-#line 15
+#line 21
 		require {
-#line 15
+#line 21
 			
-#line 15
-		attribute application_exec_type;
-#line 15
-	
-#line 15
-		} # end require
-#line 15
-	
-#line 15
-
-#line 15
-
-#line 15
-	typeattribute secure_app_exec_t application_exec_type;
-#line 15
-
-#line 15
-	 	 	
-#line 15
-##### begin corecmd_executable_file(secure_app_exec_t) depth: 3
-#line 15
- 	
-#line 15
-	
-#line 15
-	
-#line 15
-		require {
-#line 15
-			
-#line 15
-		attribute exec_type;
-#line 15
-	
-#line 15
-		} # end require
-#line 15
-	
-#line 15
-
-#line 15
-
-#line 15
-	typeattribute secure_app_exec_t exec_type;
-#line 15
-
-#line 15
-	 	 	
-#line 15
-##### begin files_type(secure_app_exec_t) depth: 4
-#line 15
- 	
-#line 15
-	
-#line 15
-	
-#line 15
-		require {
-#line 15
-			
-#line 15
-		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 15
-	
-#line 15
-		} # end require
-#line 15
-	
-#line 15
-
-#line 15
-
-#line 15
-	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
-#line 15
-
-#line 15
-	 	
-#line 15
-##### end files_type(secure_app_exec_t) depth: 3
-#line 15
- 	
-#line 15
-
-#line 15
-	 	
-#line 15
-##### end corecmd_executable_file(secure_app_exec_t) depth: 2
-#line 15
- 	
-#line 15
-
-#line 15
-	 	
-#line 15
-##### end application_executable_file(secure_app_exec_t) depth: 1
-#line 15
- 	
-#line 15
-	 	 	
-#line 15
-##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 2
-#line 15
- 	
-#line 15
-	
-#line 15
-	
-#line 15
-		require {
-#line 15
-			
-#line 15
+#line 21
 		attribute entry_type;
-#line 15
+#line 21
 	
-#line 15
+#line 21
 		} # end require
-#line 15
+#line 21
 	
-#line 15
+#line 21
 
-#line 15
+#line 21
 
-#line 15
+#line 21
 	allow secure_app_t secure_app_exec_t:file entrypoint;
-#line 15
+#line 21
 	allow secure_app_t secure_app_exec_t:file { { getattr open map read execute ioctl } ioctl lock };
-#line 15
+#line 21
 
-#line 15
+#line 21
 	typeattribute secure_app_exec_t entry_type;
-#line 15
+#line 21
 
-#line 15
+#line 21
 	 	 	
-#line 15
-##### begin corecmd_executable_file(secure_app_exec_t) depth: 3
-#line 15
+#line 21
+##### begin corecmd_executable_file(secure_app_exec_t) depth: 2
+#line 21
  	
-#line 15
+#line 21
 	
-#line 15
+#line 21
 	
-#line 15
+#line 21
 		require {
-#line 15
+#line 21
 			
-#line 15
+#line 21
 		attribute exec_type;
-#line 15
+#line 21
 	
-#line 15
+#line 21
 		} # end require
-#line 15
+#line 21
 	
-#line 15
+#line 21
 
-#line 15
+#line 21
 
-#line 15
+#line 21
 	typeattribute secure_app_exec_t exec_type;
-#line 15
+#line 21
 
-#line 15
+#line 21
 	 	 	
-#line 15
-##### begin files_type(secure_app_exec_t) depth: 4
-#line 15
+#line 21
+##### begin files_type(secure_app_exec_t) depth: 3
+#line 21
  	
-#line 15
+#line 21
 	
-#line 15
+#line 21
 	
-#line 15
+#line 21
 		require {
-#line 15
+#line 21
 			
-#line 15
+#line 21
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 15
+#line 21
 	
-#line 15
+#line 21
 		} # end require
-#line 15
+#line 21
 	
-#line 15
+#line 21
 
-#line 15
+#line 21
 
-#line 15
+#line 21
 	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
-#line 15
+#line 21
 
-#line 15
+#line 21
 	 	
-#line 15
-##### end files_type(secure_app_exec_t) depth: 3
-#line 15
+#line 21
+##### end files_type(secure_app_exec_t) depth: 2
+#line 21
  	
-#line 15
+#line 21
 
-#line 15
+#line 21
 	 	
-#line 15
-##### end corecmd_executable_file(secure_app_exec_t) depth: 2
-#line 15
+#line 21
+##### end corecmd_executable_file(secure_app_exec_t) depth: 1
+#line 21
  	
-#line 15
+#line 21
 
-#line 15
+#line 21
 	#optional_policy(`
-#line 15
+#line 21
 	#	unconfined_exec_typebounds(secure_app_exec_t)
-#line 15
+#line 21
 	#')
-#line 15
+#line 21
 
-#line 15
+#line 21
 	 	
-#line 15
-##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
-#line 15
- 	
-#line 15
-
-#line 15
-	 	
-#line 15
-##### end application_domain(secure_app_t,secure_app_exec_t) depth: 0
-#line 15
+#line 21
+##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 0
+#line 21
  	
 
+# ?????????? ???? ?????
 type secure_app_data_t;
  	 	
-#line 18
+#line 25
 ##### begin files_type(secure_app_data_t) depth: 1
-#line 18
+#line 25
  	
-#line 18
+#line 25
 	
-#line 18
+#line 25
 	
-#line 18
+#line 25
 		require {
-#line 18
+#line 25
 			
-#line 18
+#line 25
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 18
+#line 25
 	
-#line 18
+#line 25
 		} # end require
-#line 18
+#line 25
 	
-#line 18
+#line 25
 
-#line 18
+#line 25
 
-#line 18
+#line 25
 	typeattribute secure_app_data_t file_type, non_security_file_type, non_auth_file_type;
-#line 18
+#line 25
 
-#line 18
+#line 25
 	 	
-#line 18
+#line 25
 ##### end files_type(secure_app_data_t) depth: 0
-#line 18
+#line 25
  	
 
+# ??????? ???????? ??????
+type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+type_transition user_t secure_app_exec_t:process secure_app_t;
+
+# ??????? ??? ?????????
 allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name reparent rmdir search setattr write };
 allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
 
-neverallow ~secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name reparent rmdir search setattr write };
-neverallow ~secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
+# ??????? ????????
+neverallow { domain -secure_app_t } secure_app_data_t:dir { getattr open read search };
+neverallow { domain -secure_app_t } secure_app_data_t:file { getattr open read };
 
+# ?????? ???????
 allow secure_app_t self:process { fork { sigchld sigkill sigstop signull signal } };
 allow secure_app_t self:fifo_file { open { getattr read write append ioctl lock } };
 allow secure_app_t self:unix_stream_socket { { create { ioctl read getattr lock write setattr append bind connect getopt setopt shutdown } } listen accept };
 
+# ??????? ??? ????????? ??????
 allow secure_app_t lib_t:file { execute read open getattr };
 allow secure_app_t etc_t:file { read open getattr };
 
+# ?????????
 allow secure_app_t var_log_t:dir { add_name write };
 allow secure_app_t var_log_t:file { create open append };
-
