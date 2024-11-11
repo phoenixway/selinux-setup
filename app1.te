@@ -12,72 +12,69 @@ require {
     type fs_t;
     type user_devpts_t;
     type user_home_dir_t;
-    class file { map read getattr execute execute_no_trans open entrypoint relabelto };
-    class chr_file { append read write };
-    class dir { getattr search };
-    class process { noatsecure };
+    class file { map read getattr execute execute_no_trans create setattr open unlink rename entrypoint relabelto relabelfrom };
+    class dir { read write getattr open search add_name remove_name relabelto };
+    class chr_file { append read write getattr ioctl };
+    class process { noatsecure setexec transition };
     class filesystem associate;
-
 }
 
-# ?????????? ?????
+attribute secure_app_files;
+
 type secure_app_t;
 type secure_app_exec_t;
-
-# ?????????? ????????? ? ????
-role system_r types secure_app_t;
-
-# ?????????? ??????
-domain_type(secure_app_t)
-domain_entry_file(secure_app_t, secure_app_exec_t)
-
-# ?????????? ???? ?????
 type secure_app_data_t;
-files_type(secure_app_data_t)
 
-# ??????? ???????? ??????
+typeattribute secure_app_data_t secure_app_files;
+
+gen_require(`
+    attribute file_type;
+    attribute non_security_file_type;
+')
+
+role system_r types secure_app_t;
+domain_type(secure_app_t);
+domain_entry_file(secure_app_t, secure_app_exec_t);
+
 type_transition unconfined_t secure_app_exec_t:process secure_app_t;
 type_transition user_t secure_app_exec_t:process secure_app_t;
+type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 
-#============= secure_app_t ==============
+# Basic permissions
 allow secure_app_t fs_t:filesystem associate;
-
-# ??????? ??? ??????
-allow secure_app_t self:process { fork signal_perms setfscreate noatsecure};
+allow secure_app_t self:process { fork signal_perms setfscreate noatsecure setexec transition };
 allow secure_app_t self:fifo_file rw_fifo_file_perms;
 allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
 
-# ??????? ??? ?????????
-allow secure_app_t user_devpts_t:chr_file { read write append ioctl getattr };
-
-# ??????? ??? ?????????
-allow secure_app_t shell_exec_t:file { execute read open getattr execute_no_trans map };
-allow secure_app_t bin_t:file { execute read open getattr execute_no_trans map };
-allow secure_app_t secure_app_exec_t:file { execute read open getattr execute_no_trans map };
-
-# ??????? ??? ????????? ?????
-allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name reparent rmdir search setattr write };
+# Directory and file permissions
+allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name search setattr write };
 allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
 
-# ???????? ???????
-allow secure_app_t lib_t:file { execute read open getattr map };
-allow secure_app_t etc_t:file { read open getattr };
+# Home directory operations
+allow secure_app_t user_home_dir_t:dir { add_name create remove_name write search };
+allow secure_app_t user_home_t:dir { search getattr };
 
-# ?????????
-allow secure_app_t var_log_t:dir { add_name write };
-allow secure_app_t var_log_t:file { create open append };
+# Shell and binary execution permissions
+allow secure_app_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+allow secure_app_t bin_t:file { execute getattr read open execute_no_trans };
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
 
-# ??????? ????????
+# Application execution permissions
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans entrypoint };
+
+# Allowing shell interpreter to execute the script
+allow secure_app_t lib_t:file { execute getattr read open };
+
+# Allow domain transitions
+allow unconfined_t secure_app_t:process transition;
+allow user_t secure_app_t:process transition;
+
 neverallow { domain -secure_app_t } secure_app_data_t:dir *;
 neverallow { domain -secure_app_t } secure_app_data_t:file *;
+neverallow unconfined_t secure_app_data_t:{ dir file } *;
+neverallow domain secure_app_data_t:dir mounton;
+neverallow user_t secure_app_data_t:dir { getattr open read search };
+neverallow user_t secure_app_data_t:file { getattr open read };
 
-# ??????? ??? ????????? ??????????
-allow secure_app_t user_home_t:dir { search getattr };
-allow secure_app_t user_home_dir_t:dir { search getattr };
-
-# Allow executing files with secure_app_t context
-allow secure_app_t secure_app_t:file { read getattr execute entrypoint };
-
-#============= unconfined_t ==============
-allow unconfined_t secure_app_t:file relabelto;
-
+neverallow secure_app_data_t self:filesystem associate;
+neverallow { domain -secure_app_t } secure_app_data_t:filesystem *;
