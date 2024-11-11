@@ -1102,7 +1102,7 @@
 
 
 
-#line 421860 "tmp/all_interfaces.conf"
+#line 421861 "tmp/all_interfaces.conf"
 
 #line 1 "app1.te"
 
@@ -3659,7 +3659,7 @@ role system_r types secure_app_t;
 #line 38
  	;
 
-type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+# type_transition unconfined_t secure_app_exec_t:process secure_app_t;
 type_transition user_t secure_app_exec_t:process secure_app_t;
 type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 
@@ -3715,17 +3715,18 @@ allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
 allow secure_app_t lib_t:file { execute getattr read open };
 
 # Allow domain transition
-type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+# type_transition unconfined_t secure_app_exec_t:process secure_app_t;
 
 # ??????? ??? root
 allow secure_app_t self:process { setfscreate };
 allow secure_app_t self:capability { dac_override };
 
 # ????????? ???????? ??? root
-type_transition sysadm_t secure_app_exec_t:process secure_app_t;
-allow sysadm_t secure_app_t:process transition;
 
 # ??????? ??? unconfined_t (root)
-allow unconfined_t secure_app_exec_t:file { getattr execute open read };
+# allow unconfined_t secure_app_exec_t:file { getattr execute open read };
 
 
+# allow unconfined_t secure_app_exec_t:file execute;
+type_transition sysadm_t secure_app_exec_t:process secure_app_t;
+allow sysadm_t secure_app_t:process transition;

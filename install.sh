@@ -27,6 +27,19 @@ green_bold() {
   echo -e "\033[32;1m$*\033[0m"
 }
 
+function print_colored_bold() {
+  # Коди ANSI для встановлення кольору та стилю
+  red_bold="\e[1;31m"
+  reset="\e[0m"
+
+  # Передані аргументи - це наші строки
+  string1="$1"
+  string2="$2"
+
+  # Виводимо строки з потрібним форматуванням
+  echo -e "${red_bold}${string1}${reset} ${string2}"
+}
+
 # Функція для виведення повідомлень з відлагодженням
 debug_msg() {
   if [[ $debug == true ]]; then
@@ -50,8 +63,8 @@ run_command() {
     exit_code=$?
 
     if [[ "$exit_code" -ne 0 || "$debug" == "true" ]]; then
-        echo "Команда: $command"
-        echo "Вихідний код: $exit_code"
+        print_colored_bold "Команда: $command"
+        print_colored_bold "Вихідний код: $exit_code"
         echo "Вивід команди:"
         echo "$output"
     fi
@@ -136,7 +149,7 @@ reset_selinux() {
 remove_existed_policies
 #echo .......................................................
 change_encoding
-install_modules_with_make
+install_modules_with_make || exit 1
 reset_contexts
 reset_selinux
 do_testing
