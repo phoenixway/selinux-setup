@@ -5,12 +5,16 @@ source_dir="/home/roman/selinux-policies/app1"
 dest_dir="$source_dir/safe1"
 policy="app1"
 addressed_app="$source_dir/app1.sh"
+debug=false
 
-# Перевірка наявності флага -i
-while getopts ":i:" opt; do
+# Перевірка наявності флага -i та -d
+while getopts ":i:d" opt; do
   case $opt in
     i)
       policy="$OPTARG"
+      ;;
+    d)
+      debug=true
       ;;
     \?)
       echo "Невідомий параметр: -$OPTARG" >&2
@@ -18,6 +22,14 @@ while getopts ":i:" opt; do
       ;;
   esac
 done
+
+
+# Функція для виведення повідомлень з відлагодженням
+debug_msg() {
+  if [[ $debug == true ]]; then
+    echo "$1"
+  fi
+}
 
 # Функція для виведення повідомлень про помилки та завершення скрипту
 error_exit() {
