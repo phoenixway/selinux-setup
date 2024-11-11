@@ -23,6 +23,9 @@ while getopts ":i:d" opt; do
   esac
 done
 
+green_bold() {
+  echo -e "\033[32;1m$*\033[0m"
+}
 
 # Функція для виведення повідомлень з відлагодженням
 debug_msg() {
@@ -36,34 +39,105 @@ error_exit() {
   echo "Помилка: $1" >&2
   exit 1
 }
-./remove-policy.sh
 
-iconv -f UTF-8 -t ASCII//TRANSLIT app1.te > app1_ascii.te
-mv app1_ascii.te app1.te
-sed -i 's/\r$//' app1.te
+run_command() {
+  local command="$@"
+  #for command in "$@"; do
+    if [[ $debug == true ]]; then
+      debug_msg "Виконую: $command"
+    fi
+    output=$(eval "$command" 2>&1)
+    exit_code=$?
 
+    if [[ "$exit_code" -ne 0 || "$debug" == "true" ]]; then
+        echo "Команда: $command"
+        echo "Вихідний код: $exit_code"
+        echo "Вивід команди:"
+        echo "$output"
+    fi
+}
 
-# Компіляція модуля
-#checkmodule -M -m -o "$policy.mod" "$policy.te" || error_exit "Помилка при компіляції модуля"
+# Функція для виконання команди з перевіркою на помилки
+run_command333() {
+  local command="$@"
+  if [[ $debug == true ]]; then
+    debug_msg "Виконую: $command"
+  fi
+  # Перенаправляємо стандартний вивід і помилки в /dev/null, якщо debug=false
+  if [[ $debug == false ]]; then
+    $command > /dev/null 2>&1
+  else
+    $command
+  fi
+  # Перевірка на помилку
+  if [[ $? -ne 0 ]]; then
+    error_exit "Помилка при виконанні команди: $command"
+  fi
+}
 
-# Пакетування модуля
-#semodule_package -o "$policy.pp" -m "$policy.mod" || error_exit "Помилка при пакетуванні модуля"
+remove_existed_policies() {
+  green_bold Removing existing policies..
+  run_command ./remove-policy.sh
+}
 
-# Інсталяція політики
-#sudo semodule -i "$policy.pp" || error_exit "Помилка при інсталяції політики"
+change_encoding() {
+  green_bold Changing source encoding..
+  iconv -f UTF-8 -t ASCII//TRANSLIT app1.te > app1_ascii.te
+  mv app1_ascii.te app1.te
+  sed -i 's/\r$//' app1.te
+}
 
-make -f /usr/share/selinux/devel/Makefile clean
-make -f /usr/share/selinux/devel/Makefile || error_exit "Помилка make"
-sudo semodule -i $policy.pp || error_exit "Помилка при встановленні модуля" 
+install_modules_with_make() {
+  green_bold Installing new policies..
+  run_command make -f /usr/share/selinux/devel/Makefile clean
+  run_command make -f /usr/share/selinux/devel/Makefile || error_exit "Помилка make"
+  run_command sudo semodule -i $policy.pp || error_exit "Помилка при встановленні модуля"
+}
 
-sudo restorecon -RFv $dest_dir
-sudo restorecon -Fv $addressed_app
-./context2app.sh
-./context2dir.sh
-sudo semanage fcontext -a -t secure_app_exec_t "/home/.*/selinux-policies/app1/app1\.sh"
-sudo semanage fcontext -a -t secure_app_data_t "/home/.*/selinux-policies/app1/safe1(/.*)?"
-sudo restorecon -R -v /home/*/selinux-policies/app1/
-sudo setenforce 0
-sudo setenforce 1
-./test.sh
-echo "Done!"
+install_modules_with_seutils() {
+  Компіляція модуля
+  checkmodule -M -m -o "$policy.mod" "$policy.te" || error_exit "Помилка при компіляції модуля"
+
+  Пакетування модуля
+  semodule_package -o "$policy.pp" -m "$policy.mod" || error_exit "Помилка при пакетуванні модуля"
+
+  Інсталяція політики
+  sudo semodule -i "$policy.pp" || error_exit "Помилка при інсталяції політики"
+}
+
+reset_contexts() {
+  green_bold Resetting files and folders contexts..
+  run_command sudo restorecon -RFv $dest_dir
+  run_command sudo restorecon -Fv $addressed_app
+  
+  # Встановлюємо контекст для програми
+  run_command  sudo semanage fcontext -a -t secure_app_exec_t "$addressed_app"
+  run_command sudo restorecon -v $addressed_app
+  # Встановлюємо контекст для папки
+  # run_command sudo chcon -R -t secure_app_data_t $dest_dir
+  run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
+  run_command sudo restorecon -R -v $dest_dir
+
+  run_command sudo semanage fcontext -a -t secure_app_exec_t \'/home/.*/selinux-policies/app1/app1\.sh\'
+  run_command sudo semanage fcontext -a -t secure_app_data_t \'/home/.*/selinux-policies/app1/safe1\(/.*\)?\'
+  run_command sudo restorecon -R -v \'/home/*/selinux-policies/app1/\'
+}
+
+do_testing() {
+  green_bold Testing result..
+  ./test.sh
+}
+
+reset_selinux() {
+    green_bold Resetting selinux..
+    sudo setenforce 0
+    sudo setenforce 1
+}
+remove_existed_policies
+#echo .......................................................
+change_encoding
+install_modules_with_make
+reset_contexts
+reset_selinux
+do_testing
+green_bold "Done!"

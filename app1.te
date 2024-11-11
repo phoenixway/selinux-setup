@@ -10,6 +10,7 @@ require {
     type shell_exec_t;
     type bin_t;
     type fs_t;
+    type sysadm_t;
     type user_devpts_t;
     type user_home_dir_t;
     class file { map read getattr execute execute_no_trans create setattr open unlink rename entrypoint relabelto relabelfrom };
@@ -93,4 +94,16 @@ allow secure_app_t lib_t:file { execute getattr read open };
 
 # Allow domain transition
 type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+
+# ??????? ??? root
+allow secure_app_t self:process { setfscreate };
+allow secure_app_t self:capability { dac_override };
+
+# ????????? ???????? ??? root
+type_transition sysadm_t secure_app_exec_t:process secure_app_t;
+allow sysadm_t secure_app_t:process transition;
+
+# ??????? ??? unconfined_t (root)
+allow unconfined_t secure_app_exec_t:file { getattr execute open read };
+
 
