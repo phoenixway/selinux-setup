@@ -3406,9 +3406,12 @@ require {
     type bin_t;
     type user_devpts_t;
     type user_home_dir_t;
-    class file map;
+    class file { map read getattr execute execute_no_trans open entrypoint relabelto };
     class chr_file { append read write };
     class dir { getattr search };
+    class process { noatsecure };
+    class filesystem associate;
+
 }
 
 # ?????????? ?????
@@ -3420,264 +3423,267 @@ role system_r types secure_app_t;
 
 # ?????????? ??????
  	 	
-#line 27
+#line 30
 ##### begin domain_type(secure_app_t) depth: 1
-#line 27
+#line 30
  	
-#line 27
+#line 30
 	# start with basic domain
-#line 27
+#line 30
 	 	 	
-#line 27
+#line 30
 ##### begin domain_base_type(secure_app_t) depth: 2
-#line 27
+#line 30
  	
-#line 27
+#line 30
 	
-#line 27
+#line 30
 	
-#line 27
+#line 30
 		require {
-#line 27
+#line 30
 			
-#line 27
+#line 30
 		attribute domain;
-#line 27
+#line 30
 	
-#line 27
+#line 30
 		} # end require
-#line 27
+#line 30
 	
-#line 27
+#line 30
 
-#line 27
+#line 30
 
-#line 27
+#line 30
 	typeattribute secure_app_t domain;
-#line 27
+#line 30
 
-#line 27
+#line 30
 	 	
-#line 27
+#line 30
 ##### end domain_base_type(secure_app_t) depth: 1
-#line 27
+#line 30
  	
-#line 27
+#line 30
 
-#line 27
+#line 30
 	# Only way to get corenet_unlabeled packets disabled to work
-#line 27
+#line 30
 	 	 	
-#line 27
+#line 30
 ##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 2
-#line 27
+#line 30
  	
-#line 27
+#line 30
 	
-#line 27
+#line 30
 	
-#line 27
+#line 30
 		require {
-#line 27
+#line 30
 			
-#line 27
+#line 30
                 attribute corenet_unlabeled_type;
-#line 27
+#line 30
 	
-#line 27
+#line 30
 		} # end require
-#line 27
+#line 30
 	
-#line 27
+#line 30
 
-#line 27
+#line 30
 	typeattribute secure_app_t corenet_unlabeled_type;
-#line 27
+#line 30
 
-#line 27
+#line 30
 	 	
-#line 27
+#line 30
 ##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 1
-#line 27
+#line 30
  	
-#line 27
+#line 30
 
-#line 27
+#line 30
 	 	
-#line 27
+#line 30
 ##### end domain_type(secure_app_t) depth: 0
-#line 27
+#line 30
  	
  	 	
-#line 28
+#line 31
 ##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
-#line 28
+#line 31
  	
-#line 28
+#line 31
 	
-#line 28
+#line 31
 	
-#line 28
+#line 31
 		require {
-#line 28
+#line 31
 			
-#line 28
+#line 31
 		attribute entry_type;
-#line 28
+#line 31
 	
-#line 28
+#line 31
 		} # end require
-#line 28
+#line 31
 	
-#line 28
+#line 31
 
-#line 28
+#line 31
 
-#line 28
+#line 31
 	allow secure_app_t secure_app_exec_t:file entrypoint;
-#line 28
+#line 31
 	allow secure_app_t secure_app_exec_t:file { { getattr open map read execute ioctl } ioctl lock };
-#line 28
+#line 31
 
-#line 28
+#line 31
 	typeattribute secure_app_exec_t entry_type;
-#line 28
+#line 31
 
-#line 28
+#line 31
 	 	 	
-#line 28
+#line 31
 ##### begin corecmd_executable_file(secure_app_exec_t) depth: 2
-#line 28
+#line 31
  	
-#line 28
+#line 31
 	
-#line 28
+#line 31
 	
-#line 28
+#line 31
 		require {
-#line 28
+#line 31
 			
-#line 28
+#line 31
 		attribute exec_type;
-#line 28
+#line 31
 	
-#line 28
+#line 31
 		} # end require
-#line 28
+#line 31
 	
-#line 28
+#line 31
 
-#line 28
+#line 31
 
-#line 28
+#line 31
 	typeattribute secure_app_exec_t exec_type;
-#line 28
+#line 31
 
-#line 28
+#line 31
 	 	 	
-#line 28
+#line 31
 ##### begin files_type(secure_app_exec_t) depth: 3
-#line 28
+#line 31
  	
-#line 28
+#line 31
 	
-#line 28
+#line 31
 	
-#line 28
+#line 31
 		require {
-#line 28
+#line 31
 			
-#line 28
+#line 31
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 28
+#line 31
 	
-#line 28
+#line 31
 		} # end require
-#line 28
+#line 31
 	
-#line 28
+#line 31
 
-#line 28
+#line 31
 
-#line 28
+#line 31
 	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
-#line 28
+#line 31
 
-#line 28
+#line 31
 	 	
-#line 28
+#line 31
 ##### end files_type(secure_app_exec_t) depth: 2
-#line 28
+#line 31
  	
-#line 28
+#line 31
 
-#line 28
+#line 31
 	 	
-#line 28
+#line 31
 ##### end corecmd_executable_file(secure_app_exec_t) depth: 1
-#line 28
+#line 31
  	
-#line 28
+#line 31
 
-#line 28
+#line 31
 	#optional_policy(`
-#line 28
+#line 31
 	#	unconfined_exec_typebounds(secure_app_exec_t)
-#line 28
+#line 31
 	#')
-#line 28
+#line 31
 
-#line 28
+#line 31
 	 	
-#line 28
+#line 31
 ##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 0
-#line 28
+#line 31
  	
 
 # ?????????? ???? ?????
 type secure_app_data_t;
  	 	
-#line 32
+#line 35
 ##### begin files_type(secure_app_data_t) depth: 1
-#line 32
+#line 35
  	
-#line 32
+#line 35
 	
-#line 32
+#line 35
 	
-#line 32
+#line 35
 		require {
-#line 32
+#line 35
 			
-#line 32
+#line 35
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 32
+#line 35
 	
-#line 32
+#line 35
 		} # end require
-#line 32
+#line 35
 	
-#line 32
+#line 35
 
-#line 32
+#line 35
 
-#line 32
+#line 35
 	typeattribute secure_app_data_t file_type, non_security_file_type, non_auth_file_type;
-#line 32
+#line 35
 
-#line 32
+#line 35
 	 	
-#line 32
+#line 35
 ##### end files_type(secure_app_data_t) depth: 0
-#line 32
+#line 35
  	
 
 # ??????? ???????? ??????
 type_transition unconfined_t secure_app_exec_t:process secure_app_t;
 type_transition user_t secure_app_exec_t:process secure_app_t;
 
+#============= secure_app_t ==============
+allow secure_app_t fs_t:filesystem associate;
+
 # ??????? ??? ??????
-allow secure_app_t self:process { fork { sigchld sigkill sigstop signull signal } setfscreate };
+allow secure_app_t self:process { fork { sigchld sigkill sigstop signull signal } setfscreate noatsecure};
 allow secure_app_t self:fifo_file { open { getattr read write append ioctl lock } };
 allow secure_app_t self:unix_stream_socket { { create { ioctl read getattr lock write setattr append bind connect getopt setopt shutdown } } listen accept };
 
@@ -3708,3 +3714,10 @@ neverallow { domain -secure_app_t } secure_app_data_t:file *;
 # ??????? ??? ????????? ??????????
 allow secure_app_t user_home_t:dir { search getattr };
 allow secure_app_t user_home_dir_t:dir { search getattr };
+
+# Allow executing files with secure_app_t context
+allow secure_app_t secure_app_t:file { read getattr execute entrypoint };
+
+#============= unconfined_t ==============
+allow unconfined_t secure_app_t:file relabelto;
+

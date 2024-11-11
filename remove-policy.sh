@@ -36,13 +36,18 @@ sudo restorecon -Rv "$addressed_app"
 sudo semanage fcontext -d "$dest_dir(/.*)?"
 sudo restorecon -Rv "$dest_dir"
 sudo restorecon -Rv "$dest_dir/*"
+
+sudo semanage fcontext -d  "/home/.*/selinux-policies/app1/app1\.sh"
+
+sudo semanage fcontext -d "/home/.*/selinux-policies/app1/safe1(/.*)?"
 	
 # Видалення політики
 debug_msg "Видаляю політику $policy"
-sudo semodule -r $policy
+sudo semanage module -r $policy
 if [ $? -ne 0 ]; then
   echo "Помилка при видаленні політики $policy"
 fi
+
 
 debug_msg "Готово!"
 

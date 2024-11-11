@@ -24,6 +24,7 @@ error_exit() {
   echo "Помилка: $1" >&2
   exit 1
 }
+./remove-policy.sh
 
 iconv -f UTF-8 -t ASCII//TRANSLIT app1.te > app1_ascii.te
 mv app1_ascii.te app1.te
