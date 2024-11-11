@@ -1,72 +1,135 @@
-	policy_module(app1, 1.0)
+policy_module(app1, 1.0)
 
-	require {
-	    type lib_t;
-	    type etc_t;
-	    type var_log_t;
-	    type unconfined_t;
-	    type user_t;
-	    type user_home_t;
-	    type shell_exec_t;
-	    type bin_t;
-	    type user_devpts_t;
-	    type user_home_dir_t;
-	    class dir search;
-	}
+require {
+    type lib_t;
+    type etc_t;
+    type var_log_t;
+    type unconfined_t;
+    type user_t;
+    type user_home_t;
+    type shell_exec_t;
+    type bin_t;
+    type fs_t;
+    type user_devpts_t;
+    type user_home_dir_t;
+    class file { map read getattr execute execute_no_trans create setattr open unlink rename entrypoint relabelto relabelfrom };
+    class dir { read write getattr open search add_name remove_name relabelto };
+    class chr_file { append read write getattr ioctl };
+    class process { noatsecure setexec transition };
+    class filesystem associate;
+}
 
-	# ?????????? ?????
-	type secure_app_t;
-	type secure_app_exec_t;
+attribute secure_app_files;
 
-	# ?????????? ????????? ? ????
-	role system_r types secure_app_t;
+type secure_app_t;
+type secure_app_exec_t;
+type secure_app_data_t;
 
-	# ?????????? ??????
-	domain_type(secure_app_t)
-	domain_entry_file(secure_app_t, secure_app_exec_t)
+typeattribute secure_app_data_t secure_app_files;
 
-	# ?????????? ???? ?????
-	type secure_app_data_t;
-	files_type(secure_app_data_t)
+gen_require(`
+    attribute file_type;
+    attribute non_security_file_type;
+')
 
-	# ??????? ???????? ??????
-	type_transition unconfined_t secure_app_exec_t:process secure_app_t;
-	type_transition user_t secure_app_exec_t:process secure_app_t;
+role system_r types secure_app_t;
+domain_type(secure_app_t);
+domain_entry_file(secure_app_t, secure_app_exec_t);
 
-	# ??????? ??? ??????
-	allow secure_app_t self:process { fork signal_perms setfscreate };
-	allow secure_app_t self:fifo_file rw_fifo_file_perms;
-	allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
+type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+type_transition user_t secure_app_exec_t:process secure_app_t;
+type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 
-	# ??????? ??? ?????????
-	allow secure_app_t user_devpts_t:chr_file { read write append ioctl getattr };
+# Basic permissions
+allow secure_app_t fs_t:filesystem associate;
+allow secure_app_t self:process { fork signal_perms setfscreate noatsecure setexec transition };
+allow secure_app_t self:fifo_file rw_fifo_file_perms;
+allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
 
-	# ??????? ??? ?????????
-	allow secure_app_t shell_exec_t:file { execute read open getattr execute_no_trans map };
-	allow secure_app_t bin_t:file { execute read open getattr execute_no_trans map };
-	allow secure_app_t secure_app_exec_t:file { execute read open getattr execute_no_trans map };
+# Directory and file permissions
+allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name search setattr write };
+allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
 
-	# ??????? ??? ????????? ?????
-	allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name reparent rmdir search setattr write };
-	allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
+# Home directory operations
+allow secure_app_t user_home_dir_t:dir { add_name create remove_name write search };
+allow secure_app_t user_home_t:dir { search getattr };
 
-	# ???????? ???????
-	allow secure_app_t lib_t:file { execute read open getattr map };
-	allow secure_app_t etc_t:file { read open getattr };
+# Shell and binary execution permissions
+allow secure_app_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+allow secure_app_t bin_t:file { execute getattr read open execute_no_trans };
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
 
-	# ?????????
-	allow secure_app_t var_log_t:dir { add_name write };
-	allow secure_app_t var_log_t:file { create open append };
+# Application execution permissions
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans entrypoint };
 
-	# ??????? ????????
-	neverallow { domain -secure_app_t } secure_app_data_t:dir *;
-	neverallow { domain -secure_app_t } secure_app_data_t:file *;
+# Allowing shell interpreter to execute the script
+allow secure_app_t lib_t:file { execute getattr read open };
 
-	# ??????? ??? ????????? ??????????
-	allow secure_app_t user_home_t:dir { search getattr };
-	allow secure_app_t user_home_dir_t:dir search;
+# Allow domain transitions
+allow unconfined_t secure_app_t:process transition;
+allow user_t secure_app_t:process transition;
 
+neverallow { domain -secure_app_t } secure_app_data_t:dir *;
+neverallow { domain -secure_app_t } secure_app_data_t:file *;
+neverallow unconfined_t secure_app_data_t:{ dir file } *;
+neverallow domain secure_app_data_t:dir mounton;
+neverallow user_t secure_app_data_t:dir { getattr open read search };
+neverallow user_t secure_app_data_t:file { getattr open read };
 
-	***
+neverallow secure_app_data_t self:filesystem associate;
+neverallow { domain -secure_app_t } secure_app_data_t:filesystem *;
 
-	встановлюється модуль, контекст папки і програми ніби правильний, але я можу читати з терміналу папку яка має бути захищена. як це виправити?
+***
+
+allow virtnetworkd_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtnetworkd_t non_security_file_type:lnk_file { getattr read };
+allow virtnodedevd_t non_security_file_type:dir { getattr ioctl lock open read search };
+allow virtnodedevd_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtnodedevd_t non_security_file_type:lnk_file { getattr read };
+allow virtnwfilterd_t non_security_file_type:dir { getattr ioctl lock open read search };
+allow virtnwfilterd_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtnwfilterd_t non_security_file_type:lnk_file { getattr read };
+allow virtproxyd_t non_security_file_type:dir { getattr ioctl lock open read search };
+allow virtproxyd_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtproxyd_t non_security_file_type:lnk_file { getattr read };
+allow virtqemud_t file_type:dir { getattr ioctl lock open read search };
+allow virtqemud_t file_type:lnk_file { getattr read };
+allow virtqemud_t non_security_file_type:dir { mounton setattr write };
+allow virtqemud_t non_security_file_type:file { getattr ioctl lock mounton open read };
+allow virtsecretd_t non_security_file_type:dir { getattr ioctl lock open read search };
+allow virtsecretd_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtsecretd_t non_security_file_type:lnk_file { getattr read };
+allow virtstoraged_t file_type:filesystem getattr;
+allow virtstoraged_t non_security_file_type:dir { getattr ioctl lock open read search };
+allow virtstoraged_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtstoraged_t non_security_file_type:lnk_file { getattr read };
+allow virtvboxd_t non_security_file_type:dir { getattr ioctl lock open read search };
+allow virtvboxd_t non_security_file_type:file { getattr ioctl lock open read };
+allow virtvboxd_t non_security_file_type:lnk_file { getattr read };
+allow vmware_t file_type:filesystem getattr;
+allow watchdog_t file_type:filesystem getattr;
+allow wdmd_t file_type:filesystem getattr;
+allow winbind_rpcd_t non_security_file_type:dir { add_name create getattr ioctl link lock open read remove_name rename reparent rmdir search setattr unlink watch watch_reads write }; [ samba_export_all_rw ]:True
+allow winbind_rpcd_t non_security_file_type:dir { add_name getattr ioctl lock open read remove_name search write }; [ samba_export_all_rw ]:True
+allow winbind_rpcd_t non_security_file_type:dir { add_name getattr ioctl lock open read remove_name search write }; [ samba_export_all_rw ]:True
+allow winbind_rpcd_t non_security_file_type:dir { getattr ioctl lock open read search }; [ samba_export_all_ro ]:True
+allow winbind_rpcd_t non_security_file_type:dir { getattr open search }; [ samba_export_all_ro ]:True
+allow winbind_rpcd_t non_security_file_type:dir { getattr open search }; [ samba_export_all_ro ]:True
+allow winbind_rpcd_t non_security_file_type:dir { getattr open search }; [ samba_export_all_ro ]:True
+allow winbind_rpcd_t non_security_file_type:file { append create getattr ioctl link lock open read rename setattr unlink watch watch_reads write }; [ samba_export_all_rw ]:True
+allow winbind_rpcd_t non_security_file_type:file { getattr ioctl lock open read }; [ samba_export_all_ro ]:True
+allow winbind_rpcd_t non_security_file_type:lnk_file { append create getattr ioctl link lock read rename setattr unlink watch watch_reads write }; [ samba_export_all_rw ]:True
+allow winbind_rpcd_t non_security_file_type:lnk_file { getattr read }; [ samba_export_all_ro ]:True
+allow winbind_t file_type:filesystem getattr;
+allow wine_domain file_type:file execmod;
+allow wireshark_t file_type:filesystem getattr;
+allow xauth_t file_type:filesystem getattr;
+allow xdm_t file_type:filesystem getattr;
+allow xdm_t non_security_file_type:dir { mounton setattr write };
+allow xdm_t non_security_file_type:file mounton;
+allow xend_t file_type:filesystem getattr;
+allow xguest_dbusd_t file_type:service { disable enable reload start status stop };
+allow xguest_usertype file_type:filesystem getattr;
+
+*** вище файл app1.te і частина виводу команди sesearch --allow -t secure_app_data_t.
+проблема полягає в тому що при увімкненій setenforcing 1 app1.sh що має контекст secure_app_exec_t не запускається 

@@ -69,12 +69,28 @@ allow secure_app_t lib_t:file { execute getattr read open };
 allow unconfined_t secure_app_t:process transition;
 allow user_t secure_app_t:process transition;
 
-neverallow { domain -secure_app_t } secure_app_data_t:dir *;
-neverallow { domain -secure_app_t } secure_app_data_t:file *;
-neverallow unconfined_t secure_app_data_t:{ dir file } *;
-neverallow domain secure_app_data_t:dir mounton;
-neverallow user_t secure_app_data_t:dir { getattr open read search };
-neverallow user_t secure_app_data_t:file { getattr open read };
+# neverallow { domain -secure_app_t } secure_app_data_t:dir *;
+# neverallow { domain -secure_app_t } secure_app_data_t:file *;
+# neverallow unconfined_t secure_app_data_t:{ dir file } *;
+# neverallow domain secure_app_data_t:dir mounton;
+# neverallow user_t secure_app_data_t:dir { getattr open read search };
+# neverallow user_t secure_app_data_t:file { getattr open read };
 
-neverallow secure_app_data_t self:filesystem associate;
-neverallow { domain -secure_app_t } secure_app_data_t:filesystem *;
+# neverallow secure_app_data_t self:filesystem associate;
+# neverallow { domain -secure_app_t } secure_app_data_t:filesystem *;
+
+# Allow process transitions
+allow unconfined_t secure_app_exec_t:file { getattr open read execute };
+
+# Allow script execution
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans };
+
+# Allow executing shell
+allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
+
+# Allow accessing libraries
+allow secure_app_t lib_t:file { execute getattr read open };
+
+# Allow domain transition
+type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+

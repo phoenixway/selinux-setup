@@ -2,36 +2,46 @@
 module secure_app_user_home 1.0;
 
 require {
-	type fs_t;
 	type secure_app_t;
-	type shell_exec_t;
-	type user_devpts_t;
 	type unconfined_t;
+	type shell_exec_t;
+	type fs_t;
 	type user_home_dir_t;
-	class file { execute map relabelfrom relabelto };
-	class chr_file { append read write };
-	class dir { getattr relabelto search };
+	type bin_t;
+	type secure_app_data_t;
+	type user_devpts_t;
+	type user_home_t;
+	class file { execute execute_no_trans map relabelfrom relabelto };
+	class chr_file { append getattr ioctl read write };
+	class dir { getattr open read relabelto search };
 	class filesystem associate;
 }
 
 #============= secure_app_t ==============
 
 #!!!! This avc is allowed in the current policy
+allow secure_app_t bin_t:file { execute execute_no_trans };
+
+#!!!! This avc is allowed in the current policy
 allow secure_app_t fs_t:filesystem associate;
 
 #!!!! This avc is allowed in the current policy
-allow secure_app_t shell_exec_t:file map;
+allow secure_app_t shell_exec_t:file { execute map };
 
 #!!!! This avc is allowed in the current policy
-allow secure_app_t user_devpts_t:chr_file { append read write };
+#!!!! This av rule may have been overridden by an extended permission av rule
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
 
 #!!!! This avc is allowed in the current policy
-allow secure_app_t user_home_dir_t:dir { getattr search };
+allow secure_app_t user_home_dir_t:dir search;
+allow secure_app_t user_home_dir_t:dir getattr;
+
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_t:dir { getattr search };
+allow secure_app_t user_home_t:dir { open read };
 
 #============= unconfined_t ==============
-
-#!!!! This avc is allowed in the current policy
+allow unconfined_t secure_app_data_t:dir { getattr read relabelto search };
 allow unconfined_t secure_app_t:dir relabelto;
-
-#!!!! This avc is allowed in the current policy
 allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };

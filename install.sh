@@ -53,5 +53,5 @@ sudo semanage fcontext -a -t secure_app_data_t "/home/.*/selinux-policies/app1/s
 sudo restorecon -R -v /home/*/selinux-policies/app1/
 sudo setenforce 0
 sudo setenforce 1
-
+./test.sh
 echo "Done!"
