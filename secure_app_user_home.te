@@ -1,0 +1,24 @@
+
+module secure_app_user_home 1.0;
+
+require {
+	type shell_exec_t;
+	type user_devpts_t;
+	type user_home_dir_t;
+	type secure_app_t;
+	class file map;
+	class chr_file { append read write };
+	class dir { getattr search };
+}
+
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t shell_exec_t:file map;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_devpts_t:chr_file { append read write };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:dir search;
+allow secure_app_t user_home_dir_t:dir getattr;

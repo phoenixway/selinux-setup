@@ -47,6 +47,9 @@ sudo restorecon -RFv $dest_dir
 sudo restorecon -Fv $addressed_app
 ./context2app.sh
 ./context2dir.sh
+sudo semanage fcontext -a -t secure_app_exec_t "/home/.*/selinux-policies/app1/app1\.sh"
+sudo semanage fcontext -a -t secure_app_data_t "/home/.*/selinux-policies/app1/safe1(/.*)?"
+sudo restorecon -R -v /home/*/selinux-policies/app1/
 sudo setenforce 0
 sudo setenforce 1
 
