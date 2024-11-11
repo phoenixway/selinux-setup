@@ -13,6 +13,10 @@ while getopts ":i:d" opt; do
     i)
       policy="$OPTARG"
       ;;
+    t)
+      do_testing
+      exit 0
+      ;;
     d)
       debug=true
       ;;
@@ -27,17 +31,46 @@ green_bold() {
   echo -e "\033[32;1m$*\033[0m"
 }
 
+blue() {
+   # Коди ANSI для встановлення кольору та стилю
+  reset="\033[0m"
+  green="\e[32m"
+  blue="\e[34m"
+
+  # Передані аргументи - це наші строки
+  string1="$*"
+
+  # Виводимо строки з потрібним форматуванням
+  echo -e "${blue}${string1}${reset}"
+}
+
+green() {
+   # Коди ANSI для встановлення кольору та стилю
+  reset="\033[0m"
+  green="\e[32m"
+  blue="\e[34m"
+
+  # Передані аргументи - це наші строки
+  string1="$*"
+
+  # Виводимо строки з потрібним форматуванням
+  echo -e "${green}${string1}${reset}"
+}
+
 function print_colored_bold() {
   # Коди ANSI для встановлення кольору та стилю
   red_bold="\e[1;31m"
-  reset="\e[0m"
+  reset="\033[0m"
+  green="\e[32m"
+  blue="\e[34m"
 
   # Передані аргументи - це наші строки
   string1="$1"
   string2="$2"
 
   # Виводимо строки з потрібним форматуванням
-  echo -e "${red_bold}${string1}${reset} ${string2}"
+  echo -e "${red_bold}${string1}${reset}"
+  echo $string2
 }
 
 # Функція для виведення повідомлень з відлагодженням
@@ -67,6 +100,7 @@ run_command() {
         print_colored_bold "Вихідний код: $exit_code"
         echo "Вивід команди:"
         echo "$output"
+        return 2
     fi
 }
 
@@ -91,6 +125,11 @@ run_command333() {
 remove_existed_policies() {
   green_bold Removing existing policies..
   run_command ./remove-policy.sh
+  if [ $? -eq 0 ]; then
+    true
+  else
+    error_exit "Виникла помилка"
+  fi
 }
 
 change_encoding() {
@@ -103,8 +142,23 @@ change_encoding() {
 install_modules_with_make() {
   green_bold Installing new policies..
   run_command make -f /usr/share/selinux/devel/Makefile clean
+  if [ $? -eq 0 ]; then
+    true
+  else
+    error_exit "Виникла помилка"
+  fi
   run_command make -f /usr/share/selinux/devel/Makefile || error_exit "Помилка make"
+  if [ $? -eq 0 ]; then
+    true
+  else
+    error_exit "Виникла помилка"
+  fi
   run_command sudo semodule -i $policy.pp || error_exit "Помилка при встановленні модуля"
+  if [ $? -eq 0 ]; then
+    true
+  else
+    error_exit "Виникла помилка"
+  fi
 }
 
 install_modules_with_seutils() {
@@ -128,17 +182,32 @@ reset_contexts() {
   run_command sudo restorecon -v $addressed_app
   # Встановлюємо контекст для папки
   # run_command sudo chcon -R -t secure_app_data_t $dest_dir
-  run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
+  # run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
   run_command sudo restorecon -R -v $dest_dir
 
   run_command sudo semanage fcontext -a -t secure_app_exec_t \'/home/.*/selinux-policies/app1/app1\.sh\'
-  run_command sudo semanage fcontext -a -t secure_app_data_t \'/home/.*/selinux-policies/app1/safe1\(/.*\)?\'
+  # run_command sudo semanage fcontext -a -t secure_app_data_t \'/home/.*/selinux-policies/app1/safe1\(/.*\)?\'
   run_command sudo restorecon -R -v \'/home/*/selinux-policies/app1/\'
 }
 
 do_testing() {
   green_bold Testing result..
-  ./test.sh
+  set -x
+  ./run.sh
+  ./app1.sh
+  green "Permissive"
+  sudo setenforce 0
+  ls -Zd safe1/
+  blue "./app1.sh with permissive"
+  ./app1.sh
+  sudo setenforce 1
+  blue "./app1.sh with enforcing"
+  ./app1.sh
+  #sudo chcon -R -t secure_app_data_t /home/roman/selinux-policies/app1/safe1
+  #sudo ausearch -m AVC -ts recent > /dev/null 2>&1
+  #sudo audit2allow -a -M secure_app_user_home > /dev/null 2>&1
+  # sudo ausearch -m AVC -ts recent | sudo audit2allow -a > /dev/null 2>&1
+  #./test.sh
 }
 
 reset_selinux() {
@@ -146,10 +215,10 @@ reset_selinux() {
     sudo setenforce 0
     sudo setenforce 1
 }
+
 remove_existed_policies
-#echo .......................................................
 change_encoding
-install_modules_with_make || exit 1
+install_modules_with_make 
 reset_contexts
 reset_selinux
 do_testing

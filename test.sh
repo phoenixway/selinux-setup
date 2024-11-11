@@ -11,7 +11,7 @@ ls -Zd safe1/
 sudo setenforce 1
 ./app1.sh
 sudo chcon -R -t secure_app_data_t /home/roman/selinux-policies/app1/safe1
-# sudo ausearch -m AVC -ts recent
-# sudo audit2allow -a -M secure_app_user_home
-sudo ausearch -m AVC -ts recent | sudo audit2allow -a
+sudo ausearch -m AVC -ts recent > /dev/null 2>&1
+sudo audit2allow -a -M secure_app_user_home > /dev/null 2>&1
+# sudo ausearch -m AVC -ts recent | sudo audit2allow -a > /dev/null 2>&1
 

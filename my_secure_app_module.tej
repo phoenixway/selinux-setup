@@ -1,0 +1,96 @@
+
+module my_secure_app_module 1.0;
+
+require {
+	type secure_app_t;
+	type alsa_t;
+	type colord_t;
+	type sysfs_t;
+	type kernel_t;
+	type geoclue_t;
+	type proc_t;
+	type syslogd_t;
+	type NetworkManager_t;
+	type setroubleshootd_t;
+	type auditd_t;
+	type gssproxy_t;
+	type rtkit_daemon_t;
+	type devpts_t;
+	type systemd_resolved_t;
+	type pcscd_t;
+	type tuned_t;
+	type policykit_t;
+	type xdm_t;
+	type fsdaemon_t;
+	type systemd_machined_t;
+	type devicekit_disk_t;
+	type system_dbusd_t;
+	type udev_t;
+	type cupsd_t;
+	type avahi_t;
+	type unconfined_t;
+	type secure_app_data_t;
+	type user_home_t;
+	type systemd_userdbd_t;
+	type systemd_logind_t;
+	type unconfined_service_t;
+	type modemmanager_t;
+	type systemd_nsresourced_t;
+	type systemd_homed_t;
+	type chronyd_t;
+	type devicekit_power_t;
+	type accountsd_t;
+	type firewalld_t;
+	type fs_t;
+	type init_t;
+	type abrt_dump_oops_t;
+	class file open;
+	class dir { getattr read search };
+	class process getattr;
+	class filesystem associate;
+}
+
+#============= secure_app_data_t ==============
+allow secure_app_data_t fs_t:filesystem associate;
+
+#============= secure_app_t ==============
+allow secure_app_t NetworkManager_t:dir getattr;
+allow secure_app_t abrt_dump_oops_t:dir getattr;
+allow secure_app_t accountsd_t:dir getattr;
+allow secure_app_t alsa_t:dir getattr;
+allow secure_app_t auditd_t:dir getattr;
+allow secure_app_t avahi_t:dir getattr;
+allow secure_app_t chronyd_t:dir getattr;
+allow secure_app_t colord_t:dir getattr;
+allow secure_app_t cupsd_t:dir getattr;
+allow secure_app_t devicekit_disk_t:dir getattr;
+allow secure_app_t devicekit_power_t:dir getattr;
+allow secure_app_t devpts_t:dir search;
+allow secure_app_t firewalld_t:dir getattr;
+allow secure_app_t fsdaemon_t:dir getattr;
+allow secure_app_t geoclue_t:dir getattr;
+allow secure_app_t gssproxy_t:dir getattr;
+allow secure_app_t init_t:dir getattr;
+allow secure_app_t kernel_t:dir getattr;
+allow secure_app_t modemmanager_t:dir getattr;
+allow secure_app_t pcscd_t:dir getattr;
+allow secure_app_t policykit_t:dir getattr;
+allow secure_app_t proc_t:file open;
+allow secure_app_t rtkit_daemon_t:dir getattr;
+allow secure_app_t self:process getattr;
+allow secure_app_t setroubleshootd_t:dir getattr;
+allow secure_app_t sysfs_t:file open;
+allow secure_app_t syslogd_t:dir getattr;
+allow secure_app_t system_dbusd_t:dir getattr;
+allow secure_app_t systemd_homed_t:dir getattr;
+allow secure_app_t systemd_logind_t:dir getattr;
+allow secure_app_t systemd_machined_t:dir getattr;
+allow secure_app_t systemd_nsresourced_t:dir getattr;
+allow secure_app_t systemd_resolved_t:dir getattr;
+allow secure_app_t systemd_userdbd_t:dir getattr;
+allow secure_app_t tuned_t:dir getattr;
+allow secure_app_t udev_t:dir getattr;
+allow secure_app_t unconfined_service_t:dir getattr;
+allow secure_app_t unconfined_t:dir getattr;
+allow secure_app_t user_home_t:dir read;
+allow secure_app_t xdm_t:dir getattr;
