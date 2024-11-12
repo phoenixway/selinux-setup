@@ -1,5 +1,0 @@
-# Executable
-/home/.*/selinux-policies/app1/app1\.sh    -- gen_context(system_u:object_r:secure_app_exec_t,s0)
-
-# Protected directory
-/home/.*/selinux-policies/app1/safe1(/.*)?    gen_context(system_u:object_r:secure_app_data_t,s0)
