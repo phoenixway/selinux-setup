@@ -20,6 +20,7 @@ require {
     class chr_file { append read write getattr ioctl };
     class process { noatsecure setexec transition };
     class filesystem associate;
+    role unconfined_r;
 }
 
 attribute secure_app_files;

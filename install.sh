@@ -6,6 +6,29 @@ dest_dir="$source_dir/safe1"
 policy="app1"
 addressed_app="$source_dir/app1.sh"
 debug=false
+flag_r=false
+while getopts "dr" opt; do
+  case $opt in
+    d)
+      echo "Flag -d detected"
+      debug=true
+      ;;
+    r)
+      echo "Flag -r detected"
+      flag_r=true
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+shift $((OPTIND -1))
 
 green_bold() {
   echo -e "\033[32;1m$*\033[0m"
@@ -190,7 +213,7 @@ do_testing() {
   ./app1.sh
   sudo setenforce 1
   blue "./app1.sh with enforcing"
-  ./app1.sh
+  ./app1.shq
   #sudo chcon -R -t secure_app_data_t /home/roman/selinux-policies/app1/safe1
   #sudo ausearch -m AVC -ts recent > /dev/null 2>&1
   #sudo audit2allow -a -M secure_app_user_home > /dev/null 2>&1
@@ -203,31 +226,10 @@ reset_selinux() {
     sudo setenforce 0
     sudo setenforce 1
 }
-
-# Перевірка наявності флага -i та -d
-while getopts ":i:d" opt; do
-  case $opt in
-    i)
-      policy="$OPTARG"
-      ;;
-    t)
-      do_testing
-      exit 0
-      ;;
-    r)
-      remove_existed_policies
-      exit 0
-      ;;
-    d)
-      debug=true
-      ;;
-    \?)
-      echo "Невідомий параметр: -$OPTARG" >&2
-      exit 1
-      ;;
-  esac
-done
-
+if [[ "$flag_r" == true ]]; then
+  remove_existed_policies
+  exit 0
+fi
 remove_existed_policies
 change_encoding
 install_modules_with_make 

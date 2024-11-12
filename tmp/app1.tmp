@@ -3415,6 +3415,7 @@ require {
     class chr_file { append read write getattr ioctl };
     class process { noatsecure setexec transition };
     class filesystem associate;
+    role unconfined_r;
 }
 
 attribute secure_app_files;
@@ -3426,23 +3427,23 @@ type secure_app_data_t;
 typeattribute secure_app_data_t secure_app_files;
 
 
-#line 33
+#line 34
 	
-#line 33
+#line 34
 		require {
-#line 33
+#line 34
 			
-#line 33
+#line 34
     attribute file_type;
-#line 33
+#line 34
     attribute non_security_file_type;
-#line 33
+#line 34
 
-#line 33
+#line 34
 		} # end require
-#line 33
+#line 34
 	
-#line 36
+#line 37
 
 
 # Domain declarations
@@ -3450,218 +3451,218 @@ role system_r types secure_app_t;
 role unconfined_r types secure_app_t;
 
  	 	
-#line 42
+#line 43
 ##### begin domain_type(secure_app_t) depth: 1
-#line 42
+#line 43
  	
-#line 42
+#line 43
 	# start with basic domain
-#line 42
+#line 43
 	 	 	
-#line 42
+#line 43
 ##### begin domain_base_type(secure_app_t) depth: 2
-#line 42
+#line 43
  	
-#line 42
+#line 43
 	
-#line 42
+#line 43
 	
-#line 42
+#line 43
 		require {
-#line 42
+#line 43
 			
-#line 42
+#line 43
 		attribute domain;
-#line 42
+#line 43
 	
-#line 42
+#line 43
 		} # end require
-#line 42
+#line 43
 	
-#line 42
+#line 43
 
-#line 42
+#line 43
 
-#line 42
+#line 43
 	typeattribute secure_app_t domain;
-#line 42
+#line 43
 
-#line 42
+#line 43
 	 	
-#line 42
+#line 43
 ##### end domain_base_type(secure_app_t) depth: 1
-#line 42
+#line 43
  	
-#line 42
+#line 43
 
-#line 42
+#line 43
 	# Only way to get corenet_unlabeled packets disabled to work
-#line 42
+#line 43
 	 	 	
-#line 42
+#line 43
 ##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 2
-#line 42
+#line 43
  	
-#line 42
+#line 43
 	
-#line 42
+#line 43
 	
-#line 42
+#line 43
 		require {
-#line 42
+#line 43
 			
-#line 42
+#line 43
                 attribute corenet_unlabeled_type;
-#line 42
+#line 43
 	
-#line 42
+#line 43
 		} # end require
-#line 42
+#line 43
 	
-#line 42
+#line 43
 
-#line 42
+#line 43
 	typeattribute secure_app_t corenet_unlabeled_type;
-#line 42
+#line 43
 
-#line 42
+#line 43
 	 	
-#line 42
+#line 43
 ##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 1
-#line 42
+#line 43
  	
-#line 42
+#line 43
 
-#line 42
+#line 43
 	 	
-#line 42
+#line 43
 ##### end domain_type(secure_app_t) depth: 0
-#line 42
+#line 43
  	;
  	 	
-#line 43
+#line 44
 ##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
-#line 43
+#line 44
  	
-#line 43
+#line 44
 	
-#line 43
+#line 44
 	
-#line 43
+#line 44
 		require {
-#line 43
+#line 44
 			
-#line 43
+#line 44
 		attribute entry_type;
-#line 43
+#line 44
 	
-#line 43
+#line 44
 		} # end require
-#line 43
+#line 44
 	
-#line 43
+#line 44
 
-#line 43
+#line 44
 
-#line 43
+#line 44
 	allow secure_app_t secure_app_exec_t:file entrypoint;
-#line 43
+#line 44
 	allow secure_app_t secure_app_exec_t:file { { getattr open map read execute ioctl } ioctl lock };
-#line 43
+#line 44
 
-#line 43
+#line 44
 	typeattribute secure_app_exec_t entry_type;
-#line 43
+#line 44
 
-#line 43
+#line 44
 	 	 	
-#line 43
+#line 44
 ##### begin corecmd_executable_file(secure_app_exec_t) depth: 2
-#line 43
+#line 44
  	
-#line 43
+#line 44
 	
-#line 43
+#line 44
 	
-#line 43
+#line 44
 		require {
-#line 43
+#line 44
 			
-#line 43
+#line 44
 		attribute exec_type;
-#line 43
+#line 44
 	
-#line 43
+#line 44
 		} # end require
-#line 43
+#line 44
 	
-#line 43
+#line 44
 
-#line 43
+#line 44
 
-#line 43
+#line 44
 	typeattribute secure_app_exec_t exec_type;
-#line 43
+#line 44
 
-#line 43
+#line 44
 	 	 	
-#line 43
+#line 44
 ##### begin files_type(secure_app_exec_t) depth: 3
-#line 43
+#line 44
  	
-#line 43
+#line 44
 	
-#line 43
+#line 44
 	
-#line 43
+#line 44
 		require {
-#line 43
+#line 44
 			
-#line 43
+#line 44
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 43
+#line 44
 	
-#line 43
+#line 44
 		} # end require
-#line 43
+#line 44
 	
-#line 43
+#line 44
 
-#line 43
+#line 44
 
-#line 43
+#line 44
 	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
-#line 43
+#line 44
 
-#line 43
+#line 44
 	 	
-#line 43
+#line 44
 ##### end files_type(secure_app_exec_t) depth: 2
-#line 43
+#line 44
  	
-#line 43
+#line 44
 
-#line 43
+#line 44
 	 	
-#line 43
+#line 44
 ##### end corecmd_executable_file(secure_app_exec_t) depth: 1
-#line 43
+#line 44
  	
-#line 43
+#line 44
 
-#line 43
+#line 44
 	#optional_policy(`
-#line 43
+#line 44
 	#	unconfined_exec_typebounds(secure_app_exec_t)
-#line 43
+#line 44
 	#')
-#line 43
+#line 44
 
-#line 43
+#line 44
 	 	
-#line 43
+#line 44
 ##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 0
-#line 43
+#line 44
  	;
 
 #============= Transitions ==============
