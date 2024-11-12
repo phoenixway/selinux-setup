@@ -25,16 +25,18 @@ require {
 
 attribute secure_app_files;
 
-type secure_app_t;
-type secure_app_exec_t;
-type secure_app_data_t;
-
-typeattribute secure_app_data_t secure_app_files;
-
 gen_require(`
     attribute file_type;
-    attribute non_security_file_type;
+    type file_t;
 ')
+
+type secure_app_t;
+type secure_app_exec_t;
+type secure_app_data_t, file_type;
+files_type(secure_app_data_t)
+
+
+typeattribute secure_app_data_t secure_app_files;
 
 # Domain declarations
 role system_r types secure_app_t;
@@ -126,3 +128,8 @@ allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_tran
 allow sysadm_t secure_app_data_t:dir { getattr open read search };
 allow sysadm_t secure_app_data_t:file { getattr read };
 allow sysadm_t secure_app_t:process transition;
+
+#============= Neverallow Rules ==============
+# Prevent deletion of secure_app_data_t files by any domain except secure_app_t
+neverallow { domain -secure_app_t } secure_app_data_t:file { unlink };
+neverallow { domain -secure_app_t } secure_app_data_t:dir { remove_name };

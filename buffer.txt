@@ -1,5 +1,3 @@
-app1.te: 
-
 policy_module(app1, 1.0)
 
 require {
@@ -22,40 +20,47 @@ require {
     class chr_file { append read write getattr ioctl };
     class process { noatsecure setexec transition };
     class filesystem associate;
+    role unconfined_r;
 }
 
 attribute secure_app_files;
 
+gen_require(`
+    attribute file_type;
+    type file_t;
+')
+
 type secure_app_t;
 type secure_app_exec_t;
-type secure_app_data_t;
+type secure_app_data_t, file_type;
+files_type(secure_app_data_t)
+
 
 typeattribute secure_app_data_t secure_app_files;
 
-gen_require(`
-    attribute file_type;
-    attribute non_security_file_type;
-')
-
+# Domain declarations
 role system_r types secure_app_t;
+role unconfined_r types secure_app_t;
+
 domain_type(secure_app_t);
 domain_entry_file(secure_app_t, secure_app_exec_t);
 
 #============= Transitions ==============
 
-#statement that blocks ./app.sh
+# Main process transitions
 type_transition unconfined_t secure_app_exec_t:process secure_app_t;
 allow unconfined_t secure_app_t:process transition;
 
 type_transition sysadm_t secure_app_exec_t:process secure_app_t;
 allow sysadm_t secure_app_t:process transition;
 
-# experiment
-# type_transition unconfined_t secure_app_exec_t:file secure_app_t;
-
 type_transition unconfined_t secure_app_t:process secure_app_t;
 type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 allow user_t secure_app_t:process transition;
+
+# Allow context transitions
+allow unconfined_t secure_app_exec_t:file entrypoint;
+allow secure_app_t secure_app_exec_t:file entrypoint;
 
 #============= secure_app_t ==============
 
@@ -84,62 +89,45 @@ allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_tran
 # Allowing shell interpreter to execute the script
 allow secure_app_t lib_t:file { execute getattr read open };
 
+# Process and system information access
 allow secure_app_t proc_t:dir read;
 allow secure_app_t proc_t:file read;
 allow secure_app_t sysfs_t:dir read;
 allow secure_app_t sysfs_t:file read;
 
+# Additional required permissions
 allow secure_app_t user_home_dir_t:dir getattr;
 allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans };
 allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
 allow secure_app_t lib_t:file { execute getattr read open };
-allow secure_app_t self:process { setfscreate };
-allow secure_app_t self:capability { dac_override };
+allow secure_app_t self:process setfscreate;
+allow secure_app_t self:capability dac_override;
 
-
-# neverallow { domain -secure_app_t } secure_app_data_t:dir *;
-# neverallow { domain -secure_app_t } secure_app_data_t:file *;
-# neverallow unconfined_t secure_app_data_t:{ dir file } *;
-# neverallow domain secure_app_data_t:dir mounton;
-# neverallow user_t secure_app_data_t:dir { getattr open read search };
-# neverallow user_t secure_app_data_t:file { getattr open read };
-
-# neverallow secure_app_data_t self:filesystem associate;
-# neverallow { domain -secure_app_t } secure_app_data_t:filesystem *;
-
+# Added shell script execution permissions
+allow secure_app_t user_home_t:file { execute getattr read open execute_no_trans };
+allow unconfined_t user_home_t:file { execute getattr read open execute_no_trans };
 
 #============= unconfined_t ==============
-allow unconfined_t secure_app_data_t:dir { getattr open read relabelfrom relabelto search };
-allow unconfined_t secure_app_data_t:file { getattr relabelfrom relabelto };
+allow unconfined_t secure_app_data_t:dir { getattr open read search };
+allow unconfined_t secure_app_data_t:file { getattr read };
 allow unconfined_t secure_app_t:dir relabelto;
 allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };
 allow unconfined_t self:capability2 mac_admin;
 allow unconfined_t shell_exec_t:process transition;
 allow unconfined_t secure_app_exec_t:file { entrypoint getattr open read execute execute_no_trans };
 
-***
+# Role transitions
+role_transition unconfined_r secure_app_exec_t:process system_r;
+allow unconfined_r system_r;
 
-app1.sh:
-#!/bin/bash
-set -x
-ps -Z
-ls -Z /home/roman/selinux-policies/app1/safe1
+# Additional shell execution permissions
+allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
 
-при sudo setenforce 1 маю:
-./app1.sh
-./test.sh: ./app1.sh: /bin/bash: bad interpreter: Permission denied
-при sudo setenforce 0 маю:
-./app1.sh
-+ ps -Z
-LABEL                               PID TTY          TIME CMD
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 19745 pts/2 00:00:00 fish
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 21084 pts/2 00:00:00 install.sh
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 21357 pts/2 00:00:00 test.sh
-unconfined_u:unconfined_r:secure_app_t:s0-s0:c0.c1023 21373 pts/2 00:00:00 app1.sh
-unconfined_u:unconfined_r:secure_app_t:s0-s0:c0.c1023 21375 pts/2 00:00:00 ps
-+ ls -Z /home/roman/selinux-policies/app1/safe1
-unconfined_u:object_r:user_home_t:s0 test1.txt	unconfined_u:object_r:user_home_t:s0 test6.txt
-unconfined_u:object_r:user_home_t:s0 test2.txt
+#============= sysadm_t ==============
+# ???????? ????? ??? sysadm_t - ??? ?????????? ?????????
+allow sysadm_t secure_app_data_t:dir { getattr open read search };
+allow sysadm_t secure_app_data_t:file { getattr read };
+allow sysadm_t secure_app_t:process transition;
 
-проблема пропадає, якщо закоментувати правило type_transition unconfined_t secure_app_exec_t:process secure_app_t; 
-
+*** 
+такий модуль зараз. мені потрібно заборонити видаляти файли secure_app_data_t для будь-кого
