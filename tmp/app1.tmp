@@ -3728,8 +3728,8 @@ allow secure_app_t user_home_t:file { execute getattr read open execute_no_trans
 allow unconfined_t user_home_t:file { execute getattr read open execute_no_trans };
 
 #============= unconfined_t ==============
-allow unconfined_t secure_app_data_t:dir { getattr open read relabelfrom relabelto search };
-allow unconfined_t secure_app_data_t:file { getattr relabelfrom relabelto };
+allow unconfined_t secure_app_data_t:dir { getattr open read search };
+allow unconfined_t secure_app_data_t:file { getattr read };
 allow unconfined_t secure_app_t:dir relabelto;
 allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };
 allow unconfined_t self:capability2 mac_admin;
@@ -3742,3 +3742,9 @@ allow unconfined_r system_r;
 
 # Additional shell execution permissions
 allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+
+#============= sysadm_t ==============
+# ???????? ????? ??? sysadm_t - ??? ?????????? ?????????
+allow sysadm_t secure_app_data_t:dir { getattr open read search };
+allow sysadm_t secure_app_data_t:file { getattr read };
+allow sysadm_t secure_app_t:process transition;
