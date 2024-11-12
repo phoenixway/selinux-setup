@@ -7,26 +7,6 @@ policy="app1"
 addressed_app="$source_dir/app1.sh"
 debug=false
 
-# Перевірка наявності флага -i та -d
-while getopts ":i:d" opt; do
-  case $opt in
-    i)
-      policy="$OPTARG"
-      ;;
-    t)
-      do_testing
-      exit 0
-      ;;
-    d)
-      debug=true
-      ;;
-    \?)
-      echo "Невідомий параметр: -$OPTARG" >&2
-      exit 1
-      ;;
-  esac
-done
-
 green_bold() {
   echo -e "\033[32;1m$*\033[0m"
 }
@@ -174,7 +154,10 @@ install_modules_with_seutils() {
 
 reset_contexts() {
   green_bold Resetting files and folders contexts..
+
   run_command sudo restorecon -RFv $dest_dir
+  run_command chcon -t secure_app_exec_t $addressed_app
+  chmod +x $addressed_app
   run_command sudo restorecon -Fv $addressed_app
   
   # Встановлюємо контекст для програми
@@ -192,8 +175,13 @@ reset_contexts() {
 
 do_testing() {
   green_bold Testing result..
-  set -x
+  blue "Testing permissions"
+  ls -Zd app1.sh
+  ls -Zd /home/roman/selinux-policies/app1/safe1
+  ls -Zd /home/roman/selinux-policies/app1/safe1/*
+  blue "./run.sh"
   ./run.sh
+  blue "./app1.sh"
   ./app1.sh
   green "Permissive"
   sudo setenforce 0
@@ -215,6 +203,30 @@ reset_selinux() {
     sudo setenforce 0
     sudo setenforce 1
 }
+
+# Перевірка наявності флага -i та -d
+while getopts ":i:d" opt; do
+  case $opt in
+    i)
+      policy="$OPTARG"
+      ;;
+    t)
+      do_testing
+      exit 0
+      ;;
+    r)
+      remove_existed_policies
+      exit 0
+      ;;
+    d)
+      debug=true
+      ;;
+    \?)
+      echo "Невідомий параметр: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
 
 remove_existed_policies
 change_encoding

@@ -1102,7 +1102,7 @@
 
 
 
-#line 421858 "tmp/all_interfaces.conf"
+#line 421859 "tmp/all_interfaces.conf"
 
 #line 1 "app1.te"
 
@@ -3412,47 +3412,60 @@ require {
     type user_home_dir_t;
     class file { map read getattr execute execute_no_trans create setattr open unlink rename entrypoint relabelto relabelfrom };
     class dir { read write getattr open search add_name remove_name relabelto };
-    class chr_file { append read write getattr ioctl getattr};
+    class chr_file { append read write getattr ioctl };
     class process { noatsecure setexec transition };
     class filesystem associate;
-    
-    type devpts_t;
-    type secure_app_t;
-	type alsa_t;
-	type colord_t;
-	type kernel_t;
-	type geoclue_t;
-	type syslogd_t;
-	type NetworkManager_t;
-	type setroubleshootd_t;
-	type auditd_t;
-	type gssproxy_t;
-	type rtkit_daemon_t;
-	type systemd_resolved_t;
-	type pcscd_t;
-	type tuned_t;
-	type policykit_t;
-	type xdm_t;
-	type fsdaemon_t;
-	type systemd_machined_t;
-	type devicekit_disk_t;
-	type system_dbusd_t;
-	type udev_t;
-	type cupsd_t;
-	type avahi_t;
+    type user_devpts_t;
 	type secure_app_data_t;
-	type systemd_userdbd_t;
-	type systemd_logind_t;
-	type unconfined_service_t;
-	type modemmanager_t;
-	type systemd_nsresourced_t;
-	type systemd_homed_t;
-	type chronyd_t;
-	type devicekit_power_t;
-	type accountsd_t;
-	type firewalld_t;
-	type init_t;
+	type unconfined_t;
+	type pcscd_t;
+	type kernel_t;
+	type tuned_t;
+	type fs_t;
+	type setroubleshootd_t;
+	type fsdaemon_t;
+	type sssd_t;
+	type proc_t;
 	type abrt_dump_oops_t;
+	type xdm_t;
+	type NetworkManager_t;
+	type systemd_userdbd_t;
+	type syslogd_t;
+	type policykit_t;
+	type auditd_t;
+	type avahi_t;
+	type geoclue_t;
+	type modemmanager_t;
+	type init_t;
+	type chronyd_t;
+	type devicekit_disk_t;
+	type systemd_homed_t;
+	type systemd_machined_t;
+	type secure_app_t;
+	type colord_t;
+	type bin_t;
+	type systemd_resolved_t;
+	type xserver_t;
+	type shell_exec_t;
+	type user_home_t;
+	type system_dbusd_t;
+	type alsa_t;
+	type accountsd_t;
+	type secure_app_exec_t;
+	type unconfined_dbusd_t;
+	type devpts_t;
+	type unconfined_service_t;
+	type devicekit_power_t;
+	type container_runtime_t;
+	type sysfs_t;
+	type systemd_logind_t;
+	type rtkit_daemon_t;
+	type cupsd_t;
+	type user_home_dir_t;
+	type udev_t;
+	type systemd_nsresourced_t;
+	type firewalld_t;
+	type gssproxy_t;
 }
 
 attribute secure_app_files;
@@ -3464,252 +3477,249 @@ type secure_app_data_t;
 typeattribute secure_app_data_t secure_app_files;
 
 
-#line 71
+#line 84
 	
-#line 71
+#line 84
 		require {
-#line 71
+#line 84
 			
-#line 71
+#line 84
     attribute file_type;
-#line 71
+#line 84
     attribute non_security_file_type;
-#line 71
+#line 84
 
-#line 71
+#line 84
 		} # end require
-#line 71
+#line 84
 	
-#line 74
+#line 87
 
 
 role system_r types secure_app_t;
  	 	
-#line 77
+#line 90
 ##### begin domain_type(secure_app_t) depth: 1
-#line 77
+#line 90
  	
-#line 77
+#line 90
 	# start with basic domain
-#line 77
+#line 90
 	 	 	
-#line 77
+#line 90
 ##### begin domain_base_type(secure_app_t) depth: 2
-#line 77
+#line 90
  	
-#line 77
+#line 90
 	
-#line 77
+#line 90
 	
-#line 77
+#line 90
 		require {
-#line 77
+#line 90
 			
-#line 77
+#line 90
 		attribute domain;
-#line 77
+#line 90
 	
-#line 77
+#line 90
 		} # end require
-#line 77
+#line 90
 	
-#line 77
+#line 90
 
-#line 77
+#line 90
 
-#line 77
+#line 90
 	typeattribute secure_app_t domain;
-#line 77
+#line 90
 
-#line 77
+#line 90
 	 	
-#line 77
+#line 90
 ##### end domain_base_type(secure_app_t) depth: 1
-#line 77
+#line 90
  	
-#line 77
+#line 90
 
-#line 77
+#line 90
 	# Only way to get corenet_unlabeled packets disabled to work
-#line 77
+#line 90
 	 	 	
-#line 77
+#line 90
 ##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 2
-#line 77
+#line 90
  	
-#line 77
+#line 90
 	
-#line 77
+#line 90
 	
-#line 77
+#line 90
 		require {
-#line 77
+#line 90
 			
-#line 77
+#line 90
                 attribute corenet_unlabeled_type;
-#line 77
+#line 90
 	
-#line 77
+#line 90
 		} # end require
-#line 77
+#line 90
 	
-#line 77
+#line 90
 
-#line 77
+#line 90
 	typeattribute secure_app_t corenet_unlabeled_type;
-#line 77
+#line 90
 
-#line 77
+#line 90
 	 	
-#line 77
+#line 90
 ##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 1
-#line 77
+#line 90
  	
-#line 77
+#line 90
 
-#line 77
+#line 90
 	 	
-#line 77
+#line 90
 ##### end domain_type(secure_app_t) depth: 0
-#line 77
+#line 90
  	;
  	 	
-#line 78
+#line 91
 ##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
-#line 78
+#line 91
  	
-#line 78
+#line 91
 	
-#line 78
+#line 91
 	
-#line 78
+#line 91
 		require {
-#line 78
+#line 91
 			
-#line 78
+#line 91
 		attribute entry_type;
-#line 78
+#line 91
 	
-#line 78
+#line 91
 		} # end require
-#line 78
+#line 91
 	
-#line 78
+#line 91
 
-#line 78
+#line 91
 
-#line 78
+#line 91
 	allow secure_app_t secure_app_exec_t:file entrypoint;
-#line 78
+#line 91
 	allow secure_app_t secure_app_exec_t:file { { getattr open map read execute ioctl } ioctl lock };
-#line 78
+#line 91
 
-#line 78
+#line 91
 	typeattribute secure_app_exec_t entry_type;
-#line 78
+#line 91
 
-#line 78
+#line 91
 	 	 	
-#line 78
+#line 91
 ##### begin corecmd_executable_file(secure_app_exec_t) depth: 2
-#line 78
+#line 91
  	
-#line 78
+#line 91
 	
-#line 78
+#line 91
 	
-#line 78
+#line 91
 		require {
-#line 78
+#line 91
 			
-#line 78
+#line 91
 		attribute exec_type;
-#line 78
+#line 91
 	
-#line 78
+#line 91
 		} # end require
-#line 78
+#line 91
 	
-#line 78
+#line 91
 
-#line 78
+#line 91
 
-#line 78
+#line 91
 	typeattribute secure_app_exec_t exec_type;
-#line 78
+#line 91
 
-#line 78
+#line 91
 	 	 	
-#line 78
+#line 91
 ##### begin files_type(secure_app_exec_t) depth: 3
-#line 78
+#line 91
  	
-#line 78
+#line 91
 	
-#line 78
+#line 91
 	
-#line 78
+#line 91
 		require {
-#line 78
+#line 91
 			
-#line 78
+#line 91
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 78
+#line 91
 	
-#line 78
+#line 91
 		} # end require
-#line 78
+#line 91
 	
-#line 78
+#line 91
 
-#line 78
+#line 91
 
-#line 78
+#line 91
 	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
-#line 78
+#line 91
 
-#line 78
+#line 91
 	 	
-#line 78
+#line 91
 ##### end files_type(secure_app_exec_t) depth: 2
-#line 78
+#line 91
  	
-#line 78
+#line 91
 
-#line 78
+#line 91
 	 	
-#line 78
+#line 91
 ##### end corecmd_executable_file(secure_app_exec_t) depth: 1
-#line 78
+#line 91
  	
-#line 78
+#line 91
 
-#line 78
+#line 91
 	#optional_policy(`
-#line 78
+#line 91
 	#	unconfined_exec_typebounds(secure_app_exec_t)
-#line 78
+#line 91
 	#')
-#line 78
+#line 91
 
-#line 78
+#line 91
 	 	
-#line 78
+#line 91
 ##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 0
-#line 78
+#line 91
  	;
 
 #============= Transitions ==============
 
-#statement that blocks ./app.sh
+# Main process transitions
 type_transition unconfined_t secure_app_exec_t:process secure_app_t;
 allow unconfined_t secure_app_t:process transition;
 
 type_transition sysadm_t secure_app_exec_t:process secure_app_t;
 allow sysadm_t secure_app_t:process transition;
-
-# experiment
-# type_transition unconfined_t secure_app_exec_t:file secure_app_t;
 
 type_transition unconfined_t secure_app_t:process secure_app_t;
 type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
@@ -3742,28 +3752,23 @@ allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_tran
 # Allowing shell interpreter to execute the script
 allow secure_app_t lib_t:file { execute getattr read open };
 
+# Process and system information access
 allow secure_app_t proc_t:dir read;
 allow secure_app_t proc_t:file read;
 allow secure_app_t sysfs_t:dir read;
 allow secure_app_t sysfs_t:file read;
 
+# Additional required permissions
 allow secure_app_t user_home_dir_t:dir getattr;
 allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans };
+allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
 allow secure_app_t lib_t:file { execute getattr read open };
-allow secure_app_t self:process { setfscreate };
-allow secure_app_t self:capability { dac_override };
+allow secure_app_t self:process setfscreate;
+allow secure_app_t self:capability dac_override;
 
-
-# neverallow { domain -secure_app_t } secure_app_data_t:dir *;
-# neverallow { domain -secure_app_t } secure_app_data_t:file *;
-# neverallow unconfined_t secure_app_data_t:{ dir file } *;
-# neverallow domain secure_app_data_t:dir mounton;
-# neverallow user_t secure_app_data_t:dir { getattr open read search };
-# neverallow user_t secure_app_data_t:file { getattr open read };
-
-# neverallow secure_app_data_t self:filesystem associate;
-# neverallow { domain -secure_app_t } secure_app_data_t:filesystem *;
-
+# Added shell script execution permissions
+allow secure_app_t user_home_t:file { execute getattr read open execute_no_trans };
+allow unconfined_t user_home_t:file { execute getattr read open execute_no_trans };
 
 #============= unconfined_t ==============
 allow unconfined_t secure_app_data_t:dir { getattr open read relabelfrom relabelto search };
@@ -3774,45 +3779,74 @@ allow unconfined_t self:capability2 mac_admin;
 allow unconfined_t shell_exec_t:process transition;
 allow unconfined_t secure_app_exec_t:file { entrypoint getattr open read execute execute_no_trans };
 
+# Additional permissions for shell execution
+allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+allow secure_app_t bin_t:file { execute getattr read open execute_no_trans };
+allow secure_app_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
 
-# new
-allow secure_app_t NetworkManager_t:dir getattr;
-allow secure_app_t abrt_dump_oops_t:dir getattr;
-allow secure_app_t accountsd_t:dir getattr;
-allow secure_app_t alsa_t:dir getattr;
-allow secure_app_t auditd_t:dir getattr;
-allow secure_app_t avahi_t:dir getattr;
-allow secure_app_t chronyd_t:dir getattr;
-allow secure_app_t colord_t:dir getattr;
-allow secure_app_t cupsd_t:dir getattr;
-allow secure_app_t devicekit_disk_t:dir getattr;
+allow secure_app_t bin_t:file { execute execute_no_trans };
+allow secure_app_t chronyd_t:dir { getattr search };
+allow secure_app_t colord_t:dir { getattr search };
+allow secure_app_t container_runtime_t:dir getattr;
+allow secure_app_t cupsd_t:dir { getattr search };
+allow secure_app_t devicekit_disk_t:dir { getattr search };
 allow secure_app_t devicekit_power_t:dir getattr;
 allow secure_app_t devpts_t:dir search;
-allow secure_app_t firewalld_t:dir getattr;
-allow secure_app_t fsdaemon_t:dir getattr;
-allow secure_app_t geoclue_t:dir getattr;
-allow secure_app_t gssproxy_t:dir getattr;
-allow secure_app_t init_t:dir getattr;
-allow secure_app_t kernel_t:dir getattr;
-allow secure_app_t modemmanager_t:dir getattr;
-allow secure_app_t pcscd_t:dir getattr;
-allow secure_app_t policykit_t:dir getattr;
-allow secure_app_t proc_t:file open;
-allow secure_app_t rtkit_daemon_t:dir getattr;
+allow secure_app_t firewalld_t:dir { getattr search };
+allow secure_app_t proc_t:dir read;
+allow secure_app_t proc_t:file read;
+allow secure_app_t proc_t:file { getattr open };
+allow secure_app_t self:capability dac_override;
+allow secure_app_t self:capability dac_read_search;
 allow secure_app_t self:process getattr;
 allow secure_app_t setroubleshootd_t:dir getattr;
+allow secure_app_t shell_exec_t:file { execute map };
+allow secure_app_t sssd_t:dir getattr;
+allow secure_app_t sysfs_t:dir read;
+allow secure_app_t sysfs_t:file read;
 allow secure_app_t sysfs_t:file open;
-allow secure_app_t syslogd_t:dir getattr;
-allow secure_app_t system_dbusd_t:dir getattr;
+allow secure_app_t syslogd_t:dir { getattr search };
+allow secure_app_t system_dbusd_t:dir { getattr search };
 allow secure_app_t systemd_homed_t:dir getattr;
-allow secure_app_t systemd_logind_t:dir getattr;
-allow secure_app_t systemd_machined_t:dir getattr;
-allow secure_app_t systemd_nsresourced_t:dir getattr;
-allow secure_app_t systemd_resolved_t:dir getattr;
-allow secure_app_t systemd_userdbd_t:dir getattr;
-allow secure_app_t tuned_t:dir getattr;
-allow secure_app_t udev_t:dir getattr;
-allow secure_app_t unconfined_service_t:dir getattr;
-allow secure_app_t unconfined_t:dir getattr;
-allow secure_app_t user_home_t:dir read;
-allow secure_app_t xdm_t:dir getattr;
+allow secure_app_t systemd_logind_t:dir { getattr search };
+allow secure_app_t systemd_machined_t:dir { getattr search };
+allow secure_app_t systemd_nsresourced_t:dir { getattr search };
+allow secure_app_t systemd_resolved_t:dir { getattr search };
+allow secure_app_t systemd_userdbd_t:dir { getattr search };
+allow secure_app_t tuned_t:dir { getattr search };
+allow secure_app_t udev_t:dir { getattr search };
+allow secure_app_t unconfined_dbusd_t:dir getattr;
+allow secure_app_t unconfined_service_t:dir { getattr search };
+allow secure_app_t unconfined_t:dir { getattr search };
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:dir { getattr search };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_t:dir { getattr search };
+allow secure_app_t user_home_t:dir { open read };
+allow secure_app_t xdm_t:dir { getattr search };
+allow secure_app_t xserver_t:dir getattr;
+
+#============= unconfined_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow unconfined_t secure_app_data_t:dir { getattr open read relabelfrom relabelto search };
+
+#!!!! This avc is allowed in the current policy
+allow unconfined_t secure_app_data_t:file { getattr relabelfrom relabelto };
+
+#!!!! This avc is allowed in the current policy
+allow unconfined_t secure_app_exec_t:file entrypoint;
+
+#!!!! This avc is allowed in the current policy
+allow unconfined_t secure_app_t:dir relabelto;
+
+#!!!! This avc is allowed in the current policy
+allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };
+
+#!!!! This avc is allowed in the current policy
+allow unconfined_t self:capability2 mac_admin;
+allow unconfined_t shell_exec_t:process transition;
+allow secure_app_data_t fs_t:filesystem associate;
