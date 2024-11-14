@@ -1,5 +1,5 @@
 policy_module(app1, 1.0)
-
+# https://chatgpt.com/share/67362b59-5600-8004-8e3e-e82f0660fe1b
 require {
     type lib_t;
     type etc_t;
