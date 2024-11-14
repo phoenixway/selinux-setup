@@ -191,9 +191,9 @@ reset_contexts() {
   # run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
   run_command sudo restorecon -R -v $dest_dir
 
-  run_command sudo semanage fcontext -a -t secure_app_exec_t \'/home/.*/selinux-policies/app1/app1\.sh\'
+  # run_command sudo semanage fcontext -a -t secure_app_exec_t \'/home/.*/selinux-policies/app1/app1\.sh\'
   # run_command sudo semanage fcontext -a -t secure_app_data_t \'/home/.*/selinux-policies/app1/safe1\(/.*\)?\'
-  run_command sudo restorecon -R -v \'/home/*/selinux-policies/app1/\'
+  # run_command sudo restorecon -R -v \'/home/*/selinux-policies/app1/\'
 }
 
 do_testing() {
