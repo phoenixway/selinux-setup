@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Налаштування змінних
-source_dir="/home/roman/selinux-policies/app1"
+source_dir="/home/roman/studio_it/app1"
 dest_dir="$source_dir/safe1"
 policy="app1"
-addressed_app="$source_dir/app1.sh"
+addressed_app="${source_dir}/app1.sh"
 debug=false
 flag_r=false
 while getopts "dr" opt; do
@@ -72,8 +72,7 @@ function print_colored_bold() {
   string2="$2"
 
   # Виводимо строки з потрібним форматуванням
-  echo -e "${red_bold}${string1}${reset}"
-  echo $string2
+  echo -e "${red_bold}${string1}${reset}${string2}"
 }
 
 # Функція для виведення повідомлень з відлагодженням
@@ -107,32 +106,46 @@ run_command() {
     fi
 }
 
-# Функція для виконання команди з перевіркою на помилки
-run_command333() {
-  local command="$@"
-  if [[ $debug == true ]]; then
-    debug_msg "Виконую: $command"
-  fi
-  # Перенаправляємо стандартний вивід і помилки в /dev/null, якщо debug=false
-  if [[ $debug == false ]]; then
-    $command > /dev/null 2>&1
-  else
-    $command
-  fi
-  # Перевірка на помилку
-  if [[ $? -ne 0 ]]; then
-    error_exit "Помилка при виконанні команди: $command"
-  fi
-}
-
 remove_existed_policies() {
   green_bold Removing existing policies..
-  run_command ./remove-policy.sh
-  if [ $? -eq 0 ]; then
-    true
-  else
-    error_exit "Виникла помилка"
-  fi
+  # Save command output to variable
+output=$(sudo semanage fcontext -l | grep app1)
+
+# Check if output exists and process it
+if [ ! -z "$output" ]; then
+   # Create array for paths
+   declare -a paths
+
+   # Read each line of output
+   while IFS= read -r line; do
+       # Extract first field (path) from each line
+       path=$(echo "$line" | awk '{print $1}')
+       # Check if path is not empty
+       if [ ! -z "$path" ]; then
+           # Add path to array
+           paths+=("$path")
+       fi
+   done <<< "$output"
+
+   # Process array and remove contexts if array is not empty
+   if [ ${#paths[@]} -gt 0 ]; then
+       for path in "${paths[@]}"; do
+           blue "Removing context for: $path"
+           sudo semanage fcontext -d "$path"
+       done
+   else
+       blue "No paths found for removal"
+   fi
+else
+   blue "No contexts found for app1."
+fi
+
+if sudo semodule -lfull | grep -q "app1"; then
+    blue "Module app1 loaded. Removing..."
+    sudo semodule -r app1 > /dev/null 2>&1
+else
+    blue "Module app1 is not loaded."
+fi
 }
 
 change_encoding() {
@@ -187,8 +200,8 @@ reset_contexts() {
   run_command  sudo semanage fcontext -a -t secure_app_exec_t "$addressed_app"
   run_command sudo restorecon -v $addressed_app
   # Встановлюємо контекст для папки
-  # run_command sudo chcon -R -t secure_app_data_t $dest_dir
-  # run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
+  run_command sudo chcon -R -t secure_app_data_t $dest_dir
+  run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
   run_command sudo restorecon -R -v $dest_dir
 
   # run_command sudo semanage fcontext -a -t secure_app_exec_t \'/home/.*/selinux-policies/app1/app1\.sh\'
@@ -199,26 +212,24 @@ reset_contexts() {
 do_testing() {
   green_bold Testing result..
   blue "Testing permissions"
+  echo ls -Zd app1.sh
   ls -Zd app1.sh
-  ls -Zd /home/roman/selinux-policies/app1/safe1
-  ls -Zd /home/roman/selinux-policies/app1/safe1/*
+  echo "ls -Zd $dest_dir"
+  ls -Zd $dest_dir
+  echo "ls -Zd $dest_dir/*"
+  ls -Zd $dest_dir/* 
   blue "./run.sh"
   ./run.sh
-  blue "./app1.sh"
-  ./app1.sh
+  blue "./app1.sh $dest_dir"
+  ./app1.sh $dest_dir
   green "Permissive"
   sudo setenforce 0
-  ls -Zd safe1/
-  blue "./app1.sh with permissive"
-  ./app1.sh
+  ls -Zd $dest_dir
+  blue "./app1.sh $dest_dir with permissive"
+  ./app1.sh $dest_dir
   sudo setenforce 1
-  blue "./app1.sh with enforcing"
-  ./app1.sh
-  #sudo chcon -R -t secure_app_data_t /home/roman/selinux-policies/app1/safe1
-  #sudo ausearch -m AVC -ts recent > /dev/null 2>&1
-  #sudo audit2allow -a -M secure_app_user_home > /dev/null 2>&1
-  # sudo ausearch -m AVC -ts recent | sudo audit2allow -a > /dev/null 2>&1
-  #./test.sh
+  blue "./app1.sh $dest_dir with enforcing"
+  ./app1.sh $dest_dir
 }
 
 reset_selinux() {

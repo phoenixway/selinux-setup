@@ -3394,7 +3394,11 @@ category c1023;
 	
 #line 1
 
+<<<<<<< HEAD
 # https://chatgpt.com/share/67362b59-5600-8004-8e3e-e82f0660fe1b
+=======
+
+>>>>>>> v2-stricter
 require {
     type lib_t;
     type etc_t;
@@ -3440,6 +3444,7 @@ attribute secure_app_files;
 #line 31
 
 
+<<<<<<< HEAD
 type secure_app_t;
 type secure_app_exec_t;
 type secure_app_data_t, file_type;
@@ -3481,12 +3486,19 @@ type secure_app_data_t, file_type;
 
 
 typeattribute secure_app_data_t secure_app_files;
+=======
+# Type definitions
+type secure_app_t;
+type secure_app_exec_t;
+type secure_app_data_t;
+>>>>>>> v2-stricter
 
 # Domain declarations
 role system_r types secure_app_t;
 role unconfined_r types secure_app_t;
 
  	 	
+<<<<<<< HEAD
 #line 45
 ##### begin domain_type(secure_app_t) depth: 1
 #line 45
@@ -3722,10 +3734,244 @@ allow secure_app_t secure_app_exec_t:file entrypoint;
 
 # Basic permissions
 allow secure_app_t fs_t:filesystem associate;
+=======
+#line 42
+##### begin domain_type(secure_app_t) depth: 1
+#line 42
+ 	
+#line 42
+	# start with basic domain
+#line 42
+	 	 	
+#line 42
+##### begin domain_base_type(secure_app_t) depth: 2
+#line 42
+ 	
+#line 42
+	
+#line 42
+	
+#line 42
+		require {
+#line 42
+			
+#line 42
+		attribute domain;
+#line 42
+	
+#line 42
+		} # end require
+#line 42
+	
+#line 42
+
+#line 42
+
+#line 42
+	typeattribute secure_app_t domain;
+#line 42
+
+#line 42
+	 	
+#line 42
+##### end domain_base_type(secure_app_t) depth: 1
+#line 42
+ 	
+#line 42
+
+#line 42
+	# Only way to get corenet_unlabeled packets disabled to work
+#line 42
+	 	 	
+#line 42
+##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 2
+#line 42
+ 	
+#line 42
+	
+#line 42
+	
+#line 42
+		require {
+#line 42
+			
+#line 42
+                attribute corenet_unlabeled_type;
+#line 42
+	
+#line 42
+		} # end require
+#line 42
+	
+#line 42
+
+#line 42
+	typeattribute secure_app_t corenet_unlabeled_type;
+#line 42
+
+#line 42
+	 	
+#line 42
+##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 1
+#line 42
+ 	
+#line 42
+
+#line 42
+	 	
+#line 42
+##### end domain_type(secure_app_t) depth: 0
+#line 42
+ 	;
+ 	 	
+#line 43
+##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
+#line 43
+ 	
+#line 43
+	
+#line 43
+	
+#line 43
+		require {
+#line 43
+			
+#line 43
+		attribute entry_type;
+#line 43
+	
+#line 43
+		} # end require
+#line 43
+	
+#line 43
+
+#line 43
+
+#line 43
+	allow secure_app_t secure_app_exec_t:file entrypoint;
+#line 43
+	allow secure_app_t secure_app_exec_t:file { { getattr open map read execute ioctl } ioctl lock };
+#line 43
+
+#line 43
+	typeattribute secure_app_exec_t entry_type;
+#line 43
+
+#line 43
+	 	 	
+#line 43
+##### begin corecmd_executable_file(secure_app_exec_t) depth: 2
+#line 43
+ 	
+#line 43
+	
+#line 43
+	
+#line 43
+		require {
+#line 43
+			
+#line 43
+		attribute exec_type;
+#line 43
+	
+#line 43
+		} # end require
+#line 43
+	
+#line 43
+
+#line 43
+
+#line 43
+	typeattribute secure_app_exec_t exec_type;
+#line 43
+
+#line 43
+	 	 	
+#line 43
+##### begin files_type(secure_app_exec_t) depth: 3
+#line 43
+ 	
+#line 43
+	
+#line 43
+	
+#line 43
+		require {
+#line 43
+			
+#line 43
+		attribute file_type, non_security_file_type, non_auth_file_type;
+#line 43
+	
+#line 43
+		} # end require
+#line 43
+	
+#line 43
+
+#line 43
+
+#line 43
+	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
+#line 43
+
+#line 43
+	 	
+#line 43
+##### end files_type(secure_app_exec_t) depth: 2
+#line 43
+ 	
+#line 43
+
+#line 43
+	 	
+#line 43
+##### end corecmd_executable_file(secure_app_exec_t) depth: 1
+#line 43
+ 	
+#line 43
+
+#line 43
+	#optional_policy(`
+#line 43
+	#	unconfined_exec_typebounds(secure_app_exec_t)
+#line 43
+	#')
+#line 43
+
+#line 43
+	 	
+#line 43
+##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 0
+#line 43
+ 	;
+
+#============= Transitions ==============
+# type_transition unconfined_t secure_app_exec_t:process secure_app_t;
+# type_transition sysadm_t secure_app_exec_t:process secure_app_t;
+type_transition { unconfined_t sysadm_t } secure_app_exec_t:process secure_app_t;
+type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
+
+# Allow domain transitions
+allow unconfined_t secure_app_t:process transition;
+allow sysadm_t secure_app_t:process transition;
+allow user_t secure_app_t:process transition;
+
+# Entry point permissions
+allow unconfined_t secure_app_exec_t:file { getattr read execute entrypoint };
+allow secure_app_t secure_app_exec_t:file { getattr read execute entrypoint };
+
+#============= secure_app_t ==============
+# Basic process permissions
+>>>>>>> v2-stricter
 allow secure_app_t self:process { fork { sigchld sigkill sigstop signull signal } setfscreate noatsecure setexec transition };
 allow secure_app_t self:fifo_file { open { getattr read write append ioctl lock } };
 allow secure_app_t self:unix_stream_socket { { create { ioctl read getattr lock write setattr append bind connect getopt setopt shutdown } } listen accept };
 
+<<<<<<< HEAD
 # Directory and file permissions
 allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name search setattr write };
 allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
@@ -3771,10 +4017,53 @@ allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };
 allow unconfined_t self:capability2 mac_admin;
 allow unconfined_t shell_exec_t:process transition;
 allow unconfined_t secure_app_exec_t:file { entrypoint getattr open read execute execute_no_trans };
+=======
+# Filesystem permissions
+allow secure_app_t fs_t:filesystem associate;
+
+# secure_app_data_t access permissions - only for secure_app_t
+allow secure_app_t secure_app_data_t:dir { add_name create getattr open read remove_name search setattr write };
+allow secure_app_t secure_app_data_t:file { append create getattr open read rename setattr unlink write };
+
+# Execution permissions
+# allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
+allow secure_app_t shell_exec_t:file { read execute };
+allow secure_app_t bin_t:file { execute getattr read execute_no_trans };
+allow secure_app_t lib_t:file { execute getattr read };
+
+# Device and system access
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
+# allow secure_app_t proc_t:dir read;
+# allow secure_app_t proc_t:file read;
+# allow secure_app_t sysfs_t:dir read;
+# allow secure_app_t sysfs_t:file read;
+allow secure_app_t proc_t:file { read getattr };
+allow secure_app_t sysfs_t:dir getattr;
+
+
+# Home directory permissions
+allow secure_app_t user_home_dir_t:dir { search getattr };
+allow secure_app_t user_home_t:dir { search getattr };
+allow secure_app_t user_home_t:file { execute getattr read execute_no_trans };
+
+#============= Explicit denials ==============
+# Deny all access to secure_app_data_t except for secure_app_t
+neverallow { domain -secure_app_t } secure_app_data_t:dir *;
+neverallow { domain -secure_app_t } secure_app_data_t:file *;
+
+# Remove all unconfined_t permissions to secure_app_data_t
+dontaudit unconfined_t secure_app_data_t:dir *;
+dontaudit unconfined_t secure_app_data_t:file *;
+
+# Remove all sysadm_t permissions to secure_app_data_t
+dontaudit sysadm_t secure_app_data_t:dir *;
+dontaudit sysadm_t secure_app_data_t:file *;
+>>>>>>> v2-stricter
 
 # Role transitions
 role_transition unconfined_r secure_app_exec_t:process system_r;
 allow unconfined_r system_r;
+<<<<<<< HEAD
 
 # Additional shell execution permissions
 allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
@@ -3789,3 +4078,5 @@ allow sysadm_t secure_app_t:process transition;
 # Prevent deletion of secure_app_data_t files by any domain except secure_app_t
 neverallow { domain -secure_app_t } secure_app_data_t:file { unlink };
 neverallow { domain -secure_app_t } secure_app_data_t:dir { remove_name };
+=======
+>>>>>>> v2-stricter
