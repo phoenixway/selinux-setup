@@ -62,7 +62,7 @@ green() {
 
 function print_colored_bold() {
   # Коди ANSI для встановлення кольору та стилю
-  red_bold="\e[1;31m"
+  red_bold="\e[31m"
   reset="\033[0m"
   green="\e[32m"
   blue="\e[34m"
@@ -193,6 +193,7 @@ reset_contexts() {
 
   run_command sudo restorecon -RFv $dest_dir
   run_command chcon -t secure_app_exec_t $addressed_app
+  run_command chcon -t secure_app_exec_t ./hello-world
   chmod +x $addressed_app
   run_command sudo restorecon -Fv $addressed_app
   
@@ -218,6 +219,7 @@ do_testing() {
   ls -Zd $dest_dir
   echo "ls -Zd $dest_dir/*"
   ls -Zd $dest_dir/* 
+  ls -Zd ./hello-world
   blue "./run.sh"
   ./run.sh
   blue "./app1.sh $dest_dir"
@@ -230,6 +232,8 @@ do_testing() {
   sudo setenforce 1
   blue "./app1.sh $dest_dir with enforcing"
   ./app1.sh $dest_dir
+  blue "./hello-world"
+  ./hello-world
 }
 
 reset_selinux() {
@@ -241,6 +245,7 @@ if [[ "$flag_r" == true ]]; then
   remove_existed_policies
   exit 0
 fi
+green "==========================Let's start!================================"
 remove_existed_policies
 change_encoding
 install_modules_with_make 

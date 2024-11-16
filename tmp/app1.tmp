@@ -1102,7 +1102,7 @@
 
 
 
-#line 421981 "tmp/all_interfaces.conf"
+#line 421857 "tmp/all_interfaces.conf"
 
 #line 1 "app1.te"
 
@@ -3712,6 +3712,27 @@ allow secure_app_t sysfs_t:dir getattr;
 allow secure_app_t user_home_dir_t:dir { search getattr };
 allow secure_app_t user_home_t:dir { search getattr };
 allow secure_app_t user_home_t:file { execute getattr read execute_no_trans };
+
+
+allow unconfined_t user_home_t:dir { add_name remove_name write };
+allow unconfined_t user_home_t:file { create unlink };
+
+allow unconfined_t secure_app_data_t:dir { relabelto search getattr };
+allow unconfined_t secure_app_data_t:file { relabelto getattr };
+allow unconfined_t user_home_t:file relabelfrom;
+allow unconfined_t user_home_t:dir relabelfrom;
+
+typeattribute secure_app_data_t secure_app_files;
+typeattribute secure_app_data_t file_type;
+
+
+#line 106
+	allow unconfined_t user_home_t:dir { open read getattr lock search ioctl add_name remove_name write };
+#line 106
+	type_transition unconfined_t user_home_t:{ dir file } secure_app_data_t ;
+#line 106
+
+
 
 #============= Explicit denials ==============
 # Deny all access to secure_app_data_t except for secure_app_t
