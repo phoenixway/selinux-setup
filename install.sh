@@ -1,10 +1,16 @@
 #!/bin/bash
 
 # Налаштування змінних
+green_color="\e[32m"
+green_bold_color="\033[32;1m"
 source_dir="/home/roman/studio_it/app1"
 dest_dir="/home/roman/studio_it/safe1"
 policy="app1"
-addressed_app="${source_dir}/app1.sh"
+declare -a execs
+# execs[0]="${source_dir}/app1.sh"
+execs[0]="${source_dir}/hello-world"
+execs[1]="/usr/bin/keepassxc"
+
 debug=false
 flag_r=false
 while getopts "dr" opt; do
@@ -34,10 +40,18 @@ green_bold() {
   echo -e "\033[32;1m$*\033[0m"
 }
 
+tasks_group_start() {
+  echo -e -n "\033[32;1m$*\033[0m"
+}
+
+function tasks_group_success() {
+  echo -e "\r$1[✔] $2"
+}
+
 blue() {
    # Коди ANSI для встановлення кольору та стилю
   reset="\033[0m"
-  green="\e[32m"
+  
   blue="\e[34m"
 
   # Передані аргументи - це наші строки
@@ -149,14 +163,15 @@ fi
 }
 
 change_encoding() {
-  green_bold Changing source encoding..
+  tasks_group_start "Changing source encoding.."
   iconv -f UTF-8 -t ASCII//TRANSLIT app1.te > app1_ascii.te
   mv app1_ascii.te app1.te
   sed -i 's/\r$//' app1.te
+  tasks_group_success $green_bold_color "Changed source encoding."
 }
 
 install_modules_with_make() {
-  green_bold Installing new policies..
+  tasks_group_start Installing new policies..
   run_command make -f /usr/share/selinux/devel/Makefile clean
   if [ $? -eq 0 ]; then
     true
@@ -175,6 +190,7 @@ install_modules_with_make() {
   else
     error_exit "Виникла помилка"
   fi
+  tasks_group_success $green_bold_color "Installed new policies."
 }
 
 install_modules_with_seutils() {
@@ -190,20 +206,20 @@ install_modules_with_seutils() {
 
 reset_contexts() {
   green_bold Resetting files and folders contexts..
-
-  run_command sudo restorecon -RFv $dest_dir
-  run_command chcon -t secure_app_exec_t $addressed_app
-  run_command chcon -t secure_app_exec_t ./hello-world
-  chmod +x $addressed_app
-  run_command sudo restorecon -Fv $addressed_app
-  
-  # Встановлюємо контекст для програми
-  run_command  sudo semanage fcontext -a -t secure_app_exec_t "$addressed_app"
-  run_command sudo restorecon -v $addressed_app
-  # Встановлюємо контекст для папки
+  blue "Resetting execs.."
+  for element in "${execs[@]}"
+  do
+    echo "Resetting $element.."
+    run_command sudo chcon -t secure_app_exec_t $element
+    sudo chmod +x $element
+    run_command  sudo semanage fcontext -a -t secure_app_exec_t "$element"
+    run_command sudo restorecon -Fv $elements
+  done
+  blue "Resetting $dest_dir.."
   run_command sudo chcon -R -t secure_app_data_t $dest_dir
   run_command sudo semanage fcontext -a -t secure_app_data_t \'$dest_dir'(/.*)?'\'
-  run_command sudo restorecon -R -v $dest_dir
+  run_command sudo restorecon -RFv $dest_dir
+  # run_command sudo restorecon -R -v $dest_dir
 
   # run_command sudo semanage fcontext -a -t secure_app_exec_t \'/home/.*/selinux-policies/app1/app1\.sh\'
   # run_command sudo semanage fcontext -a -t secure_app_data_t \'/home/.*/selinux-policies/app1/safe1\(/.*\)?\'
@@ -213,33 +229,34 @@ reset_contexts() {
 do_testing() {
   green_bold Testing result..
   blue "Testing permissions"
-  echo ls -Zd app1.sh
-  ls -Zd app1.sh
+  for element in "${execs[@]}"
+  do
+    echo "ls -Zd $element"
+    ls -Zd $element
+  done
+  blue "Testing secure_app_data_t"
+  echo "ls -Zd $dest_dir/*"
+  ls -Zd $dest_dir/*
   echo "ls -Zd $dest_dir"
   ls -Zd $dest_dir
-  echo "ls -Zd $dest_dir/*"
-  ls -Zd $dest_dir/* 
-  ls -Zd ./hello-world
-  blue "./run.sh"
-  ./run.sh
-  blue "./app1.sh $dest_dir"
-  ./app1.sh $dest_dir
+  echo "touch $dest_dir/test10.txt"
+  touch $dest_dir/test10.txt
+  echo "rm $dest_dir/test10.txt"
+  rm $dest_dir/test10.txt
   green "Permissive"
   sudo setenforce 0
   ls -Zd $dest_dir
-  blue "./app1.sh $dest_dir with permissive"
-  ./app1.sh $dest_dir
   sudo setenforce 1
-  blue "./app1.sh $dest_dir with enforcing"
-  ./app1.sh $dest_dir
+  green "Enforcing"
   blue "./hello-world"
   ./hello-world
 }
 
 reset_selinux() {
-    green_bold Resetting selinux..
+    tasks_group_start Resetting selinux..
     sudo setenforce 0
     sudo setenforce 1
+    tasks_group_success $green_bold_color "Resetted selinux."
 }
 if [[ "$flag_r" == true ]]; then
   remove_existed_policies

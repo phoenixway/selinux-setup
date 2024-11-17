@@ -23,28 +23,36 @@ require {
     role unconfined_r;
 }
 
+# attribute secure_app_files;
+
 # Type definitions
 type secure_app_t;
+type secure_app_exec_t;
+type secure_app_data_t;
+
+# Prybyrayemo secure_app_data_t ? file_type
+# typeattribute secure_app_data_t;
+# not file_type;
+# typeattribute secure_app_data_t secure_app_files;
 
 # Domain declarations
 role system_r types secure_app_t;
 role unconfined_r types secure_app_t;
 
-# EXEC
-type secure_app_exec_t;
-type_transition { unconfined_t sysadm_t } secure_app_exec_t:process secure_app_t;
-
-# Entry point permissions
-allow secure_app_t secure_app_exec_t:file { getattr read execute entrypoint };
-
-# TRANSITIONS
 domain_type(secure_app_t);
 domain_entry_file(secure_app_t, secure_app_exec_t);
+
+#============= Transitions ==============
+type_transition { unconfined_t sysadm_t } secure_app_exec_t:process secure_app_t;
+# type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 
 # Allow domain transitions
 allow unconfined_t secure_app_t:process transition;
 allow sysadm_t secure_app_t:process transition;
 allow user_t secure_app_t:process transition;
+
+# Entry point permissions
+allow secure_app_t secure_app_exec_t:file { getattr read execute entrypoint };
 
 #============= secure_app_t ==============
 # Basic process permissions
@@ -54,6 +62,10 @@ allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
 
 # Filesystem permissions
 allow secure_app_t fs_t:filesystem associate;
+
+# secure_app_data_t access permissions - only for secure_app_t
+allow secure_app_t secure_app_data_t:dir { add_name create getattr open read remove_name search setattr write };
+allow secure_app_t secure_app_data_t:file { append create getattr open read rename setattr unlink write };
 
 # Execution permissions
 allow secure_app_t shell_exec_t:file { read execute };
@@ -70,12 +82,6 @@ allow secure_app_t user_home_dir_t:dir { search getattr };
 allow secure_app_t user_home_t:dir { search getattr };
 allow secure_app_t user_home_t:file { execute getattr read execute_no_trans };
 
-# DATA 
-type secure_app_data_t;
-# secure_app_data_t access permissions - only for secure_app_t
-allow secure_app_t secure_app_data_t:dir { add_name create getattr open read remove_name search setattr write };
-allow secure_app_t secure_app_data_t:file { append create getattr open read rename setattr unlink write };
-
 #============= Explicit denials ==============
 # ?aborona vs`oho dlya unconfined_t
 neverallow unconfined_t secure_app_data_t:dir { add_name remove_name write create setattr rename reparent rmdir open read search };
@@ -87,4 +93,8 @@ neverallow { domain -secure_app_t } secure_app_data_t:file *;
 
 # ?aborona ?miny kontekstu
 neverallow * secure_app_data_t:{ dir file } { relabelfrom relabelto };
+
+# Role transitions
+#role_transition unconfined_r secure_app_exec_t:process system_r;
+#allow unconfined_r system_r;
 
