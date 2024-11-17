@@ -1,4 +1,4 @@
-policy_module(app1, 1.1)
+policy_module(app1, 1.7)
 
 require {
     type lib_t;
@@ -23,17 +23,17 @@ require {
     role unconfined_r;
 }
 
-attribute secure_app_files;
-
-gen_require(`
-    attribute file_type;
-    type file_t;
-')
+# attribute secure_app_files;
 
 # Type definitions
 type secure_app_t;
 type secure_app_exec_t;
 type secure_app_data_t;
+
+# Prybyrayemo secure_app_data_t ? file_type
+# typeattribute secure_app_data_t;
+# not file_type;
+# typeattribute secure_app_data_t secure_app_files;
 
 # Domain declarations
 role system_r types secure_app_t;
@@ -44,7 +44,7 @@ domain_entry_file(secure_app_t, secure_app_exec_t);
 
 #============= Transitions ==============
 type_transition { unconfined_t sysadm_t } secure_app_exec_t:process secure_app_t;
-type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
+# type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 
 # Allow domain transitions
 allow unconfined_t secure_app_t:process transition;
@@ -52,7 +52,6 @@ allow sysadm_t secure_app_t:process transition;
 allow user_t secure_app_t:process transition;
 
 # Entry point permissions
-allow unconfined_t secure_app_exec_t:file { getattr read execute entrypoint };
 allow secure_app_t secure_app_exec_t:file { getattr read execute entrypoint };
 
 #============= secure_app_t ==============
@@ -83,35 +82,19 @@ allow secure_app_t user_home_dir_t:dir { search getattr };
 allow secure_app_t user_home_t:dir { search getattr };
 allow secure_app_t user_home_t:file { execute getattr read execute_no_trans };
 
-#============= Initial setup permissions ==============
-# These permissions are needed only for initial setup and labeling
-allow unconfined_t secure_app_data_t:dir { relabelto search getattr };
-allow unconfined_t secure_app_data_t:file { relabelto getattr };
-allow unconfined_t user_home_t:file relabelfrom;
-allow unconfined_t user_home_t:dir relabelfrom;
-allow unconfined_t user_home_t:dir { add_name remove_name write };
-allow unconfined_t user_home_t:file { create unlink };
-
 #============= Explicit denials ==============
-# Deny all modifications to secure_app_data_t except for secure_app_t
-neverallow { domain -secure_app_t -unconfined_t } secure_app_data_t:dir { add_name remove_name write create setattr rename reparent rmdir };
-neverallow { domain -secure_app_t -unconfined_t } secure_app_data_t:file { write create setattr rename unlink };
+# ?aborona vs`oho dlya unconfined_t
+neverallow unconfined_t secure_app_data_t:dir { add_name remove_name write create setattr rename reparent rmdir open read search };
+neverallow unconfined_t secure_app_data_t:file { write create setattr unlink append rename open read getattr };
 
-# Remove unconfined_t write permissions after initial setup
-dontaudit unconfined_t secure_app_data_t:dir { add_name remove_name write create setattr };
-dontaudit unconfined_t secure_app_data_t:file { write create setattr unlink };
+# ?aborona dlya vsikh domeniv krim secure_app_t
+neverallow { domain -secure_app_t } secure_app_data_t:dir *;
+neverallow { domain -secure_app_t } secure_app_data_t:file *;
 
-# Remove all sysadm_t permissions to secure_app_data_t
-dontaudit sysadm_t secure_app_data_t:dir *;
-dontaudit sysadm_t secure_app_data_t:file *;
-
-# Type association
-typeattribute secure_app_data_t secure_app_files;
-typeattribute secure_app_data_t file_type;
-
-# File transitions
-filetrans_pattern(unconfined_t, user_home_t, secure_app_data_t, { dir file })
+# ?aborona ?miny kontekstu
+neverallow * secure_app_data_t:{ dir file } { relabelfrom relabelto };
 
 # Role transitions
-role_transition unconfined_r secure_app_exec_t:process system_r;
-allow unconfined_r system_r;
+#role_transition unconfined_r secure_app_exec_t:process system_r;
+#allow unconfined_r system_r;
+

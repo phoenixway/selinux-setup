@@ -2,7 +2,7 @@
 
 # Налаштування змінних
 source_dir="/home/roman/studio_it/app1"
-dest_dir="$source_dir/safe1"
+dest_dir="/home/roman/studio_it/safe1"
 policy="app1"
 addressed_app="${source_dir}/app1.sh"
 debug=false
