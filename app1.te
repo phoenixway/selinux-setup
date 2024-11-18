@@ -677,3 +677,56 @@ allow secure_app_t user_home_dir_t:file unlink;
 
 #============= systemd_logind_t ==============
 allow systemd_logind_t self:capability net_admin;
+#============= chkpwd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow chkpwd_t user_devpts_t:chr_file { read write };
+
+#============= init_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow init_t chkpwd_t:process siginh;
+
+#!!!! This avc is allowed in the current policy
+allow init_t unconfined_t:process siginh;
+
+#============= policykit_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow policykit_t policykit_auth_t:process { noatsecure rlimitinh siginh };
+
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t self:netlink_kobject_uevent_socket read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:file unlink;
+allow secure_app_t user_home_dir_t:file create;
+
+#============= systemd_logind_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow systemd_logind_t self:capability net_admin;
+
+#============= chkpwd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow chkpwd_t user_devpts_t:chr_file { read write };
+
+#============= init_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow init_t chkpwd_t:process siginh;
+
+#!!!! This avc is allowed in the current policy
+allow init_t unconfined_t:process siginh;
+
+#============= secure_app_t ==============
+allow secure_app_t user_home_dir_t:file create;
+allow secure_app_t user_home_t:file { create setattr };
+
+#============= systemd_logind_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow systemd_logind_t self:capability net_admin;

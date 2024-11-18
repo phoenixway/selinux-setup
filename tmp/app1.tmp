@@ -3554,6 +3554,20 @@ require {
 	class chr_file { append getattr ioctl map open read write };
 	class filesystem { associate getattr };
 	class blk_file getattr;
+    	type user_devpts_t;
+	type init_t;
+	type systemd_logind_t;
+	type unconfined_t;
+	type chkpwd_t;
+	type policykit_t;
+	type policykit_auth_t;
+	type user_home_dir_t;
+	class capability net_admin;
+	class process { noatsecure rlimitinh siginh };
+	class netlink_kobject_uevent_socket read;
+	class file unlink;
+	class chr_file { read write };
+
 }
 
 # Type definitions
@@ -3566,218 +3580,218 @@ role system_r types secure_app_t;
 role unconfined_r types secure_app_t;
 
  	 	
-#line 173
+#line 187
 ##### begin domain_type(secure_app_t) depth: 1
-#line 173
+#line 187
  	
-#line 173
+#line 187
 	# start with basic domain
-#line 173
+#line 187
 	 	 	
-#line 173
+#line 187
 ##### begin domain_base_type(secure_app_t) depth: 2
-#line 173
+#line 187
  	
-#line 173
+#line 187
 	
-#line 173
+#line 187
 	
-#line 173
+#line 187
 		require {
-#line 173
+#line 187
 			
-#line 173
+#line 187
 		attribute domain;
-#line 173
+#line 187
 	
-#line 173
+#line 187
 		} # end require
-#line 173
+#line 187
 	
-#line 173
+#line 187
 
-#line 173
+#line 187
 
-#line 173
+#line 187
 	typeattribute secure_app_t domain;
-#line 173
+#line 187
 
-#line 173
+#line 187
 	 	
-#line 173
+#line 187
 ##### end domain_base_type(secure_app_t) depth: 1
-#line 173
+#line 187
  	
-#line 173
+#line 187
 
-#line 173
+#line 187
 	# Only way to get corenet_unlabeled packets disabled to work
-#line 173
+#line 187
 	 	 	
-#line 173
+#line 187
 ##### begin corenet_all_recvfrom_unlabeled(secure_app_t) depth: 2
-#line 173
+#line 187
  	
-#line 173
+#line 187
 	
-#line 173
+#line 187
 	
-#line 173
+#line 187
 		require {
-#line 173
+#line 187
 			
-#line 173
+#line 187
                 attribute corenet_unlabeled_type;
-#line 173
+#line 187
 	
-#line 173
+#line 187
 		} # end require
-#line 173
+#line 187
 	
-#line 173
+#line 187
 
-#line 173
+#line 187
 	typeattribute secure_app_t corenet_unlabeled_type;
-#line 173
+#line 187
 
-#line 173
+#line 187
 	 	
-#line 173
+#line 187
 ##### end corenet_all_recvfrom_unlabeled(secure_app_t) depth: 1
-#line 173
+#line 187
  	
-#line 173
+#line 187
 
-#line 173
+#line 187
 	 	
-#line 173
+#line 187
 ##### end domain_type(secure_app_t) depth: 0
-#line 173
+#line 187
  	;
  	 	
-#line 174
+#line 188
 ##### begin domain_entry_file(secure_app_t,secure_app_exec_t) depth: 1
-#line 174
+#line 188
  	
-#line 174
+#line 188
 	
-#line 174
+#line 188
 	
-#line 174
+#line 188
 		require {
-#line 174
+#line 188
 			
-#line 174
+#line 188
 		attribute entry_type;
-#line 174
+#line 188
 	
-#line 174
+#line 188
 		} # end require
-#line 174
+#line 188
 	
-#line 174
+#line 188
 
-#line 174
+#line 188
 
-#line 174
+#line 188
 	allow secure_app_t secure_app_exec_t:file entrypoint;
-#line 174
+#line 188
 	allow secure_app_t secure_app_exec_t:file { { getattr open map read execute ioctl } ioctl lock };
-#line 174
+#line 188
 
-#line 174
+#line 188
 	typeattribute secure_app_exec_t entry_type;
-#line 174
+#line 188
 
-#line 174
+#line 188
 	 	 	
-#line 174
+#line 188
 ##### begin corecmd_executable_file(secure_app_exec_t) depth: 2
-#line 174
+#line 188
  	
-#line 174
+#line 188
 	
-#line 174
+#line 188
 	
-#line 174
+#line 188
 		require {
-#line 174
+#line 188
 			
-#line 174
+#line 188
 		attribute exec_type;
-#line 174
+#line 188
 	
-#line 174
+#line 188
 		} # end require
-#line 174
+#line 188
 	
-#line 174
+#line 188
 
-#line 174
+#line 188
 
-#line 174
+#line 188
 	typeattribute secure_app_exec_t exec_type;
-#line 174
+#line 188
 
-#line 174
+#line 188
 	 	 	
-#line 174
+#line 188
 ##### begin files_type(secure_app_exec_t) depth: 3
-#line 174
+#line 188
  	
-#line 174
+#line 188
 	
-#line 174
+#line 188
 	
-#line 174
+#line 188
 		require {
-#line 174
+#line 188
 			
-#line 174
+#line 188
 		attribute file_type, non_security_file_type, non_auth_file_type;
-#line 174
+#line 188
 	
-#line 174
+#line 188
 		} # end require
-#line 174
+#line 188
 	
-#line 174
+#line 188
 
-#line 174
+#line 188
 
-#line 174
+#line 188
 	typeattribute secure_app_exec_t file_type, non_security_file_type, non_auth_file_type;
-#line 174
+#line 188
 
-#line 174
+#line 188
 	 	
-#line 174
+#line 188
 ##### end files_type(secure_app_exec_t) depth: 2
-#line 174
+#line 188
  	
-#line 174
+#line 188
 
-#line 174
+#line 188
 	 	
-#line 174
+#line 188
 ##### end corecmd_executable_file(secure_app_exec_t) depth: 1
-#line 174
+#line 188
  	
-#line 174
+#line 188
 
-#line 174
+#line 188
 	#optional_policy(`
-#line 174
+#line 188
 	#	unconfined_exec_typebounds(secure_app_exec_t)
-#line 174
+#line 188
 	#')
-#line 174
+#line 188
 
-#line 174
+#line 188
 	 	
-#line 174
+#line 188
 ##### end domain_entry_file(secure_app_t,secure_app_exec_t) depth: 0
-#line 174
+#line 188
  	;
 
 # Transitions
@@ -4231,3 +4245,95 @@ allow unconfined_t secure_app_data_t:dir { add_name open read remove_name rmdir 
 #!!!! This avc is allowed in the current policy
 allow unconfined_t secure_app_data_t:file { getattr relabelfrom relabelto };
 allow unconfined_t secure_app_data_t:file { map open read unlink };
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file { link setattr };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t data_home_t:dir remove_name;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t data_home_t:file { rename unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:lnk_file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:sock_file { getattr setattr unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:file { getattr read };
+
+#============= chkpwd_t ==============
+allow chkpwd_t user_devpts_t:chr_file { read write };
+
+#============= init_t ==============
+allow init_t chkpwd_t:process siginh;
+allow init_t unconfined_t:process siginh;
+
+#============= policykit_t ==============
+allow policykit_t policykit_auth_t:process { noatsecure rlimitinh siginh };
+
+#============= secure_app_t ==============
+allow secure_app_t self:netlink_kobject_uevent_socket read;
+allow secure_app_t user_home_dir_t:file unlink;
+
+#============= systemd_logind_t ==============
+allow systemd_logind_t self:capability net_admin;
+#============= chkpwd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow chkpwd_t user_devpts_t:chr_file { read write };
+
+#============= init_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow init_t chkpwd_t:process siginh;
+
+#!!!! This avc is allowed in the current policy
+allow init_t unconfined_t:process siginh;
+
+#============= policykit_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow policykit_t policykit_auth_t:process { noatsecure rlimitinh siginh };
+
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t self:netlink_kobject_uevent_socket read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:file unlink;
+allow secure_app_t user_home_dir_t:file create;
+
+#============= systemd_logind_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow systemd_logind_t self:capability net_admin;
+
+#============= chkpwd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow chkpwd_t user_devpts_t:chr_file { read write };
+
+#============= init_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow init_t chkpwd_t:process siginh;
+
+#!!!! This avc is allowed in the current policy
+allow init_t unconfined_t:process siginh;
+
+#============= secure_app_t ==============
+allow secure_app_t user_home_dir_t:file create;
+allow secure_app_t user_home_t:file { create setattr };
+
+#============= systemd_logind_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow systemd_logind_t self:capability net_admin;
