@@ -21,19 +21,92 @@ require {
     class process { noatsecure setexec transition };
     class filesystem associate;
     role unconfined_r;
+    type cache_home_t;
+    type config_home_t;
+    type data_home_t;
+    type gconf_home_t;
+    type user_tmp_t;
+    type user_fonts_cache_t;
+    type session_dbusd_tmp_t;
+    type dri_device_t;
+    type init_var_run_t;
+    type passwd_file_t;
+    type pcscd_var_run_t;
+    type system_dbusd_var_lib_t;
+    type system_dbusd_var_run_t;
+    type tmp_t;
+    type tmpfs_t;
+    type udev_var_run_t;
+    type unconfined_dbusd_t;
+    type urandom_device_t;
+    type user_fonts_t;
+    type sysfs_t;
+    type proc_t;
+    type dma_device_t;
+    type var_lib_t;
+    class lnk_file read;
+    class file { getattr map open read watch write };
+    class dir { add_name read search };
+    class netlink_kobject_uevent_socket { getopt setopt };
+    class process setsched;
+    class sock_file getattr;
+    class chr_file { read write };
+    type samba_share_t;
+    type systemd_userdbd_runtime_t;
+    type fixed_disk_device_t;
+    type fusefs_t;
+    type mozilla_home_t;
+    type ssh_home_t;
+    type audio_home_t;
+    type home_cert_t;
+    type mount_var_run_t;
+    type thumb_home_t;
+    class blk_file getattr;
+    class unix_stream_socket connectto;
+    class sock_file { getattr setattr unlink rename write };
+    type pcscd_t;
+    type system_dbusd_t;
+    	type cache_home_t;
+	type data_home_t;
+	type tmp_t;
+	type user_home_dir_t;
+	type mozilla_home_t;
+	type ssh_home_t;
+	type audio_home_t;
+	type home_cert_t;
+	type mount_var_run_t;
+	type udev_var_run_t;
+	type gconf_home_t;
+	type config_home_t;
+	class sock_file { rename write };
+	class file { create getattr link lock open rename setattr unlink };
+	class dir { add_name create getattr open read remove_name watch write };
+    	type sysfs_t;
+	type data_home_t;
+	type tmp_t;
+	type config_home_t;
+	type unconfined_t;
+	type cache_home_t;
+	class sock_file { create write };
+	class file { create getattr link rename setattr };
+	class process signull;
+	class dir read;
+    	type unconfined_t;
+	type cache_home_t;
+	type tmp_t;
+	type config_home_t;
+	type sysfs_t;
+	class file { getattr link rename setattr };
+	class process signull;
+	class sock_file { create getattr setattr unlink };
+	class dir read;
+	class lnk_file getattr;
 }
-
-# attribute secure_app_files;
 
 # Type definitions
 type secure_app_t;
 type secure_app_exec_t;
 type secure_app_data_t;
-
-# Prybyrayemo secure_app_data_t ? file_type
-# typeattribute secure_app_data_t;
-# not file_type;
-# typeattribute secure_app_data_t secure_app_files;
 
 # Domain declarations
 role system_r types secure_app_t;
@@ -42,9 +115,8 @@ role unconfined_r types secure_app_t;
 domain_type(secure_app_t);
 domain_entry_file(secure_app_t, secure_app_exec_t);
 
-#============= Transitions ==============
+# Transitions
 type_transition { unconfined_t sysadm_t } secure_app_exec_t:process secure_app_t;
-# type_transition secure_app_t user_home_dir_t:dir secure_app_data_t;
 
 # Allow domain transitions
 allow unconfined_t secure_app_t:process transition;
@@ -54,7 +126,6 @@ allow user_t secure_app_t:process transition;
 # Entry point permissions
 allow secure_app_t secure_app_exec_t:file { getattr read execute entrypoint };
 
-#============= secure_app_t ==============
 # Basic process permissions
 allow secure_app_t self:process { fork signal_perms setfscreate noatsecure setexec transition };
 allow secure_app_t self:fifo_file rw_fifo_file_perms;
@@ -74,27 +145,259 @@ allow secure_app_t lib_t:file { execute getattr read };
 
 # Device and system access
 allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
-allow secure_app_t proc_t:file { read getattr };
+allow secure_app_t proc_t:file { read getattr open };
 allow secure_app_t sysfs_t:dir getattr;
+allow secure_app_t sysfs_t:file { read open };
+allow secure_app_t sysfs_t:lnk_file read;
 
 # Home directory permissions
-allow secure_app_t user_home_dir_t:dir { search getattr };
-allow secure_app_t user_home_t:dir { search getattr };
-allow secure_app_t user_home_t:file { execute getattr read execute_no_trans };
+allow secure_app_t user_home_dir_t:dir { search getattr open read watch write };
+allow secure_app_t user_home_t:dir { search getattr open read watch write };
+allow secure_app_t user_home_t:file { execute getattr read execute_no_trans open watch };
 
-#============= Explicit denials ==============
-# ?aborona vs`oho dlya unconfined_t
-neverallow unconfined_t secure_app_data_t:dir { add_name remove_name write create setattr rename reparent rmdir open read search };
-neverallow unconfined_t secure_app_data_t:file { write create setattr unlink append rename open read getattr };
+# Additional permissions
+allow secure_app_t cache_home_t:dir { search getattr open read add_name remove_name create write };
+allow secure_app_t cache_home_t:file { open read getattr write map create lock unlink rename };
+allow secure_app_t config_home_t:dir { search getattr open read add_name remove_name create write watch };
+allow secure_app_t config_home_t:file { read write open getattr map watch create link lock setattr unlink rename };
+allow secure_app_t data_home_t:dir { search read getattr open add_name create write watch };
+allow secure_app_t data_home_t:file { read write open getattr create setattr };
+allow secure_app_t fs_t:filesystem getattr;
+allow secure_app_t gconf_home_t:dir { search getattr read };
+allow secure_app_t unconfined_t:file read;
+allow secure_app_t unconfined_t:unix_stream_socket connectto;
+allow secure_app_t user_tmp_t:dir { search getattr open read add_name create write watch };
+allow secure_app_t user_tmp_t:file { open read write map create unlink };
+allow secure_app_t user_tmp_t:sock_file { write create rename };
+allow secure_app_t user_fonts_cache_t:dir { search getattr open read };
+allow secure_app_t user_fonts_cache_t:file { open write read getattr lock map };
+allow secure_app_t user_fonts_t:dir { read search open getattr };
+allow secure_app_t session_dbusd_tmp_t:sock_file write;
+allow secure_app_t init_var_run_t:dir search;
+allow secure_app_t passwd_file_t:file { read open getattr };
+allow secure_app_t pcscd_var_run_t:dir search;
+allow secure_app_t pcscd_var_run_t:sock_file { getattr write };
+allow secure_app_t self:netlink_kobject_uevent_socket { create getopt setopt bind getattr };
+allow secure_app_t self:process { execmem setrlimit setsched signull };
+allow secure_app_t system_dbusd_var_lib_t:dir search;
+allow secure_app_t system_dbusd_var_lib_t:lnk_file read;
+allow secure_app_t system_dbusd_var_run_t:dir search;
+allow secure_app_t system_dbusd_var_run_t:sock_file write;
+allow secure_app_t tmp_t:dir { write add_name create remove_name rmdir setattr open read };
+allow secure_app_t tmp_t:file { create open write read getattr map unlink };
+allow secure_app_t tmpfs_t:file { write read getattr map };
+allow secure_app_t udev_var_run_t:dir search;
+allow secure_app_t udev_var_run_t:file { read open getattr };
+allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
+allow secure_app_t urandom_device_t:chr_file write;
+allow secure_app_t dma_device_t:chr_file { read write open getattr ioctl };
+allow secure_app_t dri_device_t:chr_file { read write open getattr ioctl map };
+allow secure_app_t var_lib_t:dir read;
+allow secure_app_t var_lib_t:file { getattr open read map };
+allow secure_app_t var_lib_t:lnk_file read;
+allow secure_app_t etc_t:file map;
+allow secure_app_t pcscd_t:unix_stream_socket connectto;
+allow secure_app_t samba_share_t:dir { getattr read };
+allow secure_app_t system_dbusd_t:unix_stream_socket connectto;
+allow secure_app_t systemd_userdbd_runtime_t:dir read;
+allow secure_app_t fixed_disk_device_t:blk_file getattr;
+allow secure_app_t fusefs_t:filesystem getattr;
+allow secure_app_t fusefs_t:dir { read search };
+allow secure_app_t mount_var_run_t:dir search;
+allow secure_app_t mount_var_run_t:file { getattr open read };
+allow secure_app_t mozilla_home_t:dir { getattr read };
+allow secure_app_t ssh_home_t:dir { getattr read };
+allow secure_app_t audio_home_t:dir { getattr read };
+allow secure_app_t home_cert_t:dir { getattr read };
+allow secure_app_t thumb_home_t:dir { getattr search };
 
-# ?aborona dlya vsikh domeniv krim secure_app_t
-neverallow { domain -secure_app_t } secure_app_data_t:dir *;
-neverallow { domain -secure_app_t } secure_app_data_t:file *;
+# unconfined_t permissions
+allow unconfined_t secure_app_data_t:dir { relabelto getattr relabelfrom };
+allow unconfined_t secure_app_data_t:file { relabelto getattr relabelfrom };
 
-# ?aborona ?miny kontekstu
-neverallow * secure_app_data_t:{ dir file } { relabelfrom relabelto };
+# secure_app_data_t permissions
+allow secure_app_data_t fs_t:filesystem associate;
 
-# Role transitions
-#role_transition unconfined_r secure_app_exec_t:process system_r;
-#allow unconfined_r system_r;
+#============= secure_app_t ==============
 
+#!!!! This avc is allowed in the current policy
+allow secure_app_t audio_home_t:dir { getattr read };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:dir create;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file rename;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t config_home_t:dir remove_name;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t config_home_t:file { link lock rename setattr unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t data_home_t:dir add_name;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t data_home_t:file create;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t gconf_home_t:dir { getattr read };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t home_cert_t:dir { getattr read };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t mount_var_run_t:file open;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t mozilla_home_t:dir { getattr read };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t ssh_home_t:dir { getattr read };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:sock_file { rename write };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t udev_var_run_t:file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:dir { open watch write };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_dir_t:file getattr;
+
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file rename;
+allow secure_app_t cache_home_t:file { link setattr };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t config_home_t:file rename;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t data_home_t:file create;
+allow secure_app_t sysfs_t:dir read;
+allow secure_app_t sysfs_t:file getattr;
+allow secure_app_t tmp_t:sock_file { create write };
+allow secure_app_t unconfined_t:process signull;
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file { link rename setattr };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t config_home_t:file rename;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:file getattr;
+allow secure_app_t sysfs_t:lnk_file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:sock_file create;
+allow secure_app_t tmp_t:sock_file { getattr setattr unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t unconfined_t:process signull;
+
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file { link rename setattr };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t config_home_t:file rename;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:file getattr;
+allow secure_app_t sysfs_t:lnk_file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:sock_file create;
+allow secure_app_t tmp_t:sock_file { getattr setattr unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t unconfined_t:process signull;
+
+
+#============= secure_app_t ==============
+
+#!!!! This avc can be allowed using the boolean 'domain_can_mmap_files'
+allow secure_app_t bin_t:file map;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file { link setattr };
+allow secure_app_t cache_home_t:sock_file write;
+allow secure_app_t etc_t:dir watch;
+allow secure_app_t mount_var_run_t:file watch;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:lnk_file getattr;
+allow secure_app_t tmp_t:file link;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:sock_file { create getattr setattr unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t unconfined_t:process signull;
+allow secure_app_t user_home_t:dir remove_name;
+allow secure_app_t user_home_t:file write;
+
+#============= secure_app_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t bin_t:file map;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:file { link setattr };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t cache_home_t:sock_file write;
+allow secure_app_t data_home_t:dir remove_name;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t etc_t:dir watch;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t mount_var_run_t:file watch;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:lnk_file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:file link;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t tmp_t:sock_file { create getattr setattr unlink };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t unconfined_t:process signull;
+allow secure_app_t user_home_dir_t:dir { add_name remove_name };
+allow secure_app_t user_home_dir_t:file { read write };
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_t:dir remove_name;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_home_t:file write;
+allow secure_app_t user_home_t:file unlink;
