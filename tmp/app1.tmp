@@ -3840,77 +3840,76 @@ allow secure_app_t lib_t:file { execute getattr read };
 # Home directory permissions
 allow secure_app_t user_home_dir_t:dir { search getattr open read write watch add_name remove_name };
 allow secure_app_t user_home_t:dir { search getattr open read write watch add_name remove_name };
-allow secure_app_t user_home_t:file { execute create getattr read write open execute_no_trans open watch setattr unlink };
+allow secure_app_t user_home_t:file { execute create getattr read write open execute_no_trans open watch setattr unlink link };
+allow secure_app_t data_home_t:file { read write open getattr create setattr rename unlink };
+allow secure_app_t data_home_t:dir { add_name getattr open read remove_name search watch write };
+allow secure_app_t gconf_home_t:dir { search getattr read };
+allow secure_app_t home_cert_t:dir { getattr read };
+allow secure_app_t home_root_t:dir { read watch };
+allow secure_app_t user_home_dir_t:file { link open read watch write getattr unlink create };
+
 
 # Configuration and cache
 allow secure_app_t cache_home_t:dir { search getattr open read add_name remove_name create write };
-allow secure_app_t cache_home_t:file { open read getattr write create unlink link setattr };
+allow secure_app_t cache_home_t:file { open read getattr write map create lock unlink rename link setattr };
 allow secure_app_t config_home_t:dir { search getattr open read add_name remove_name create write watch };
-allow secure_app_t config_home_t:file { read write open getattr create setattr unlink };
+allow secure_app_t config_home_t:file { create getattr link lock map open read rename setattr unlink watch write };
+allow secure_app_t cache_home_t:sock_file write;
+
 
 # Temporary files
 allow secure_app_t tmp_t:dir { write add_name create remove_name read rmdir setattr open };
 allow secure_app_t tmp_t:file { create open write read getattr unlink link map };
 allow secure_app_t tmp_t:sock_file { create getattr setattr unlink rename write };
-allow secure_app_t user_tmp_t:dir { search getattr open read add_name create write };
+allow secure_app_t user_tmp_t:dir { search getattr open read add_name create write watch };
 allow secure_app_t user_tmp_t:file { open read write create unlink map };
 allow secure_app_t user_tmp_t:sock_file { write create rename };
+allow secure_app_t tmpfs_t:file { write read getattr map };
+
 
 # D-Bus communication
-allow secure_app_t system_dbusd_var_run_t:sock_file write;
 allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
 allow secure_app_t system_dbusd_t:unix_stream_socket connectto;
 allow secure_app_t system_dbusd_t:dbus send_msg;
 allow secure_app_t systemd_hostnamed_t:dbus send_msg;
 allow secure_app_t systemd_logind_t:dbus send_msg;
+allow secure_app_t session_dbusd_tmp_t:sock_file write;
+allow secure_app_t system_dbusd_var_lib_t:dir search;
+allow secure_app_t system_dbusd_var_lib_t:lnk_file read;
+allow secure_app_t system_dbusd_var_run_t:dir search;
+allow secure_app_t system_dbusd_var_run_t:sock_file write;
+
 
 # Additional permissions
-allow secure_app_t cache_home_t:dir { search getattr open read add_name remove_name create write };
-allow secure_app_t cache_home_t:file { open read getattr write map create lock unlink rename link setattr };
-allow secure_app_t config_home_t:dir { search getattr open read add_name remove_name create write watch };
-allow secure_app_t config_home_t:file { read write open getattr map watch create link lock setattr unlink rename };
-allow secure_app_t data_home_t:dir { search read getattr open add_name create write watch remove_name };
-allow secure_app_t data_home_t:file { read write open getattr create setattr rename unlink };
+
 # allow secure_app_t fs_t:filesystem getattr;
-allow secure_app_t gconf_home_t:dir { search getattr read };
-allow secure_app_t unconfined_t:file read;
-allow secure_app_t unconfined_t:unix_stream_socket connectto;
-allow secure_app_t user_tmp_t:dir { search getattr open read add_name create write watch };
-allow secure_app_t user_tmp_t:file { open read write map create unlink };
-allow secure_app_t user_tmp_t:sock_file { write create rename };
+
+
+
 allow secure_app_t user_fonts_cache_t:dir { search getattr open read };
 allow secure_app_t user_fonts_cache_t:file { open write read getattr lock map };
 allow secure_app_t user_fonts_t:dir { read search open getattr };
-allow secure_app_t session_dbusd_tmp_t:sock_file write;
 # allow secure_app_t init_var_run_t:dir search;
 # allow secure_app_t passwd_file_t:file { read open getattr };
 # allow secure_app_t pcscd_var_run_t:dir search;
 # allow secure_app_t pcscd_var_run_t:sock_file { getattr write };
 allow secure_app_t self:netlink_kobject_uevent_socket { create getopt setopt bind getattr };
 allow secure_app_t self:process { execmem setrlimit setsched signull };
-allow secure_app_t system_dbusd_var_lib_t:dir search;
-allow secure_app_t system_dbusd_var_lib_t:lnk_file read;
-allow secure_app_t system_dbusd_var_run_t:dir search;
-allow secure_app_t system_dbusd_var_run_t:sock_file write;
-allow secure_app_t tmp_t:dir { write add_name create remove_name rmdir setattr open read };
-allow secure_app_t tmp_t:file { create open write read getattr map unlink link };
-allow secure_app_t tmp_t:sock_file { create getattr setattr unlink rename write };
-allow secure_app_t tmpfs_t:file { write read getattr map };
 # allow secure_app_t udev_var_run_t:dir search;
 # allow secure_app_t udev_var_run_t:file { read open getattr };
 # allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
 # allow secure_app_t urandom_device_t:chr_file write;
 allow secure_app_t dma_device_t:chr_file { read write open getattr ioctl };
 allow secure_app_t dri_device_t:chr_file { read write open getattr ioctl map };
+
 allow secure_app_t var_lib_t:dir read;
 allow secure_app_t var_lib_t:file { getattr open read map };
 allow secure_app_t var_lib_t:lnk_file read;
 # allow secure_app_t etc_t:file map;
-allow secure_app_t pcscd_t:unix_stream_socket connectto;
+# allow secure_app_t pcscd_t:unix_stream_socket connectto;
 # allow secure_app_t samba_share_t:dir { getattr read };
-allow secure_app_t system_dbusd_t:unix_stream_socket connectto;
 allow secure_app_t systemd_userdbd_runtime_t:dir read;
-allow secure_app_t fixed_disk_device_t:blk_file getattr;
+# allow secure_app_t fixed_disk_device_t:blk_file getattr;
 # allow secure_app_t fusefs_t:filesystem getattr;
 # allow secure_app_t fusefs_t:dir { read search };
 # allow secure_app_t mount_var_run_t:dir search;
@@ -3925,25 +3924,26 @@ allow secure_app_t home_cert_t:dir { getattr read };
 allow unconfined_t secure_app_data_t:dir { relabelto getattr relabelfrom add_name open read remove_name rmdir search write };
 allow unconfined_t secure_app_data_t:file { relabelto getattr relabelfrom map open read unlink };
 
+allow secure_app_t unconfined_dbusd_t:dir { getattr search };
+allow secure_app_t unconfined_dbusd_t:file { open read };
+allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
+allow secure_app_t unconfined_service_t:dir { getattr search };
+allow secure_app_t unconfined_service_t:file { open read };
+allow secure_app_t unconfined_t:dir { getattr search };
+allow secure_app_t unconfined_t:file { read open };
+allow secure_app_t unconfined_t:process { getattr signull };
+allow secure_app_t unconfined_t:unix_stream_socket connectto;
+
+
 # secure_app_data_t permissions
 allow secure_app_data_t fs_t:filesystem associate;
 
 # Additional permissions
 allow secure_app_t bin_t:file map;
-allow secure_app_t cache_home_t:dir { add_name create getattr read remove_name search write };
-allow secure_app_t cache_home_t:file { create getattr link lock map open read rename setattr unlink write };
-allow secure_app_t cache_home_t:sock_file write;
-allow secure_app_t config_home_t:dir { add_name getattr read remove_name search watch write };
-allow secure_app_t config_home_t:file { create getattr link lock map open read rename setattr unlink watch write };
-allow secure_app_t data_home_t:dir { add_name getattr open read remove_name search watch write };
-allow secure_app_t data_home_t:file { create getattr open read setattr write rename unlink };
-allow secure_app_t devpts_t:dir search;
+# allow secure_app_t devpts_t:dir search;
 allow secure_app_t dma_device_t:chr_file { open read write };
 allow secure_app_t dri_device_t:chr_file { getattr ioctl map open read write };
-allow secure_app_t fs_t:filesystem getattr;
-allow secure_app_t gconf_home_t:dir { getattr read search };
-allow secure_app_t home_cert_t:dir { getattr read };
-allow secure_app_t home_root_t:dir { read watch };
+# allow secure_app_t fs_t:filesystem getattr;
 # allow secure_app_t init_t:dir { getattr search };
 # allow secure_app_t init_t:file { open read };
 # allow secure_app_t init_var_run_t:dir search;
@@ -3956,25 +3956,12 @@ allow secure_app_t shell_exec_t:file { execute map };
 # allow secure_app_t sysfs_t:dir read;
 # allow secure_app_t sysfs_t:lnk_file getattr;
 allow secure_app_t tmp_t:sock_file { getattr setattr unlink };
-allow secure_app_t unconfined_dbusd_t:dir { getattr search };
-allow secure_app_t unconfined_dbusd_t:file { open read };
-allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
-allow secure_app_t unconfined_service_t:dir { getattr search };
-allow secure_app_t unconfined_service_t:file { open read };
-allow secure_app_t unconfined_t:dir { getattr search };
-allow secure_app_t unconfined_t:file { read open };
-allow secure_app_t unconfined_t:process { getattr signull };
-allow secure_app_t unconfined_t:unix_stream_socket connectto;
+
 # allow secure_app_t unlabeled_t:file getattr;
 # allow secure_app_t urandom_device_t:chr_file write;
 # allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
-allow secure_app_t user_fonts_cache_t:dir search;
-allow secure_app_t user_fonts_cache_t:file { getattr lock map open read write };
-allow secure_app_t user_fonts_t:dir { getattr open read search };
-allow secure_app_t user_home_dir_t:dir { open read watch write add_name remove_name };
-allow secure_app_t user_home_dir_t:file { link open read watch write getattr unlink create };
-allow secure_app_t user_home_t:dir { open read watch write add_name remove_name };
-allow secure_app_t user_home_t:file { open watch link unlink write create setattr };
+
+
 allow secure_app_t user_tmp_t:dir { getattr search };
 allow secure_app_t user_tmp_t:file { map open write };
 allow secure_app_t user_tmp_t:sock_file write;
