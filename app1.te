@@ -421,3 +421,68 @@ allow secure_app_t sysfs_t:file getattr;
 allow secure_app_t user_tmp_t:dir rmdir;
 
 allow secure_app_t mozilla_home_t:file { open write create getattr };
+###
+# Basic permissions
+allow secure_app_t fs_t:filesystem associate;
+allow secure_app_t self:process { fork signal_perms setfscreate noatsecure setexec transition };
+allow secure_app_t self:fifo_file rw_fifo_file_perms;
+allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
+
+# Directory and file permissions
+allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name search setattr write };
+allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
+
+# Home directory operations
+allow secure_app_t user_home_dir_t:dir { add_name create remove_name write search };
+allow secure_app_t user_home_t:dir { search getattr };
+
+# Shell and binary execution permissions
+allow secure_app_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+allow secure_app_t bin_t:file { execute getattr read open execute_no_trans };
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
+
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans entrypoint };
+
+# Allowing shell interpreter to execute the script
+allow secure_app_t lib_t:file { execute getattr read open };
+
+# Process and system information access
+allow secure_app_t proc_t:dir read;
+allow secure_app_t proc_t:file read;
+allow secure_app_t sysfs_t:dir read;
+allow secure_app_t sysfs_t:file read;
+
+# Additional required permissions
+allow secure_app_t user_home_dir_t:dir getattr;
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans };
+allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
+allow secure_app_t lib_t:file { execute getattr read open };
+allow secure_app_t self:process setfscreate;
+allow secure_app_t self:capability dac_override;
+
+# Added shell script execution permissions
+allow secure_app_t user_home_t:file { execute getattr read open execute_no_trans };
+allow unconfined_t user_home_t:file { execute getattr read open execute_no_trans };
+
+#============= unconfined_t ==============
+allow unconfined_t secure_app_data_t:dir { getattr open read search };
+allow unconfined_t secure_app_data_t:file { getattr read };
+allow unconfined_t secure_app_t:dir relabelto;# Application execution permissions
+
+allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };
+allow unconfined_t self:capability2 mac_admin;
+allow unconfined_t shell_exec_t:process transition;
+allow unconfined_t secure_app_exec_t:file { entrypoint getattr open read execute execute_no_trans };
+
+# Role transitions
+role_transition unconfined_r secure_app_exec_t:process system_r;
+allow unconfined_r system_r;
+
+# Additional shell execution permissions
+allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+
+#============= sysadm_t ==============
+# ???????? ????? ??? sysadm_t - ??? ?????????? ?????????
+allow sysadm_t secure_app_data_t:dir { getattr open read search };
+allow sysadm_t secure_app_data_t:file { getattr read };
+allow sysadm_t secure_app_t:process transition;
