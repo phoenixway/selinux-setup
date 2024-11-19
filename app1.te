@@ -213,10 +213,14 @@ type user_tmp_t;
 	class dir { create rmdir };
 }
 
+attribute secure_files;
+
 # Type definitions
 type secure_app_t;
 type secure_app_exec_t;
 type secure_app_data_t;
+
+typeattribute secure_app_t secure_files;
 
 # Domain declarations
 role system_r types secure_app_t;
