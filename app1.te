@@ -213,6 +213,12 @@ type user_tmp_t;
 	class dir { create rmdir };
 }
 
+gen_require(`
+     attribute file_type;
+    type file_t;
+    type default_t;
+')
+
 attribute secure_files;
 
 # Type definitions
@@ -221,6 +227,12 @@ type secure_app_exec_t;
 type secure_app_data_t;
 
 typeattribute secure_app_t secure_files;
+
+# FIXME: do?volyaye vsi operatsiyi nad secure_data_t
+# typeattribute secure_app_data_t file_type;
+# typeattribute secure_app_data_t default_t;
+# files_type(secure_app_data_t);
+fs_associate(secure_app_data_t);
 
 # Domain declarations
 role system_r types secure_app_t;
@@ -480,6 +492,8 @@ allow unconfined_r system_r;
 
 # Additional shell execution permissions
 allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+
+# filetrans_pattern(unconfined_t, user_home_t, secure_app_data_t, { dir file })
 
 #============= sysadm_t ==============
 # ???????? ????? ??? sysadm_t - ??? ?????????? ?????????

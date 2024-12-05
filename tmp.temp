@@ -1,0 +1,488 @@
+policy_module(app1, 1.7)
+
+require {
+    type lib_t;
+    type etc_t;
+    type var_log_t;
+    type unconfined_t;
+    type user_t;
+    type user_home_t;
+    type shell_exec_t;
+    type bin_t;
+    type fs_t;
+    type sysadm_t;
+    type proc_t;
+    type sysfs_t;
+    type user_devpts_t;
+    type user_home_dir_t;
+    type cache_home_t;
+    type config_home_t;
+    type data_home_t;
+    type gconf_home_t;
+    type user_tmp_t;
+    type user_fonts_cache_t;
+    type session_dbusd_tmp_t;
+    type dri_device_t;
+    type init_var_run_t;
+    type passwd_file_t;
+    type pcscd_var_run_t;
+    type system_dbusd_var_lib_t;
+    type system_dbusd_var_run_t;
+    type tmp_t;
+    type tmpfs_t;
+    type udev_var_run_t;
+    type user_tmp_t;
+    type system_dbusd_var_run_t;
+    type unconfined_dbusd_t;
+    type urandom_device_t;
+    type user_fonts_t;
+    type sysfs_t;
+    type dma_device_t;
+    type var_lib_t;
+    class file { map read getattr execute execute_no_trans create setattr open unlink rename entrypoint relabelto relabelfrom };
+    class dir { read write getattr open search add_name remove_name relabelto };
+    class chr_file { append read write getattr ioctl };
+    class process { noatsecure setexec transition };
+    class filesystem associate;
+    role unconfined_r;
+    class lnk_file read;
+    class sock_file { getattr setattr unlink rename write };
+    class netlink_kobject_uevent_socket { getopt setopt };
+    class process setsched;
+    class blk_file getattr;
+    class unix_stream_socket connectto;
+    class sock_file { rename write };
+    type samba_share_t;
+    type systemd_userdbd_runtime_t;
+    type fixed_disk_device_t;
+    type fusefs_t;
+    type mozilla_home_t;
+    type ssh_home_t;
+    type audio_home_t;
+    type home_cert_t;
+    type mount_var_run_t;
+    type thumb_home_t;
+    type pcscd_t;
+    type system_dbusd_t;
+    type chronyd_t;
+    type syslogd_t;
+    type fixed_disk_device_t;
+    type usr_t;
+    type urandom_device_t;
+    type rtkit_daemon_t;
+    type NetworkManager_t;
+    type mount_var_run_t;
+    type pcscd_t;
+    type fusefs_t;
+    type unlabeled_t;
+    type user_home_dir_t;
+    type systemd_resolved_t;
+    type ssh_home_t;
+    type sssd_t;
+    type var_t;
+    type session_dbusd_tmp_t;
+    type home_root_t;
+    type samba_share_t;
+    type systemd_userdbd_t;
+    type passwd_file_t;
+    type shell_exec_t;
+    type data_home_t;
+    type user_fonts_t;
+    type user_fonts_cache_t;
+    type system_dbusd_t;
+    type alsa_t;
+    type kernel_t;
+    type systemd_machined_t;
+    type flatpak_helper_t;
+    type fsdaemon_t;
+    type accountsd_t;
+    type devicekit_disk_t;
+    type unconfined_dbusd_t;
+    type devpts_t;
+    type audio_home_t;
+    type user_devpts_t;
+    type tuned_t;
+    type init_t;
+    type cache_home_t;
+    type colord_t;
+    type bin_t;
+    type auditd_t;
+    type proc_t;
+    type firewalld_t;
+    type home_cert_t;
+    type user_tmp_t;
+    type udev_t;
+    type gconf_home_t;
+    type devicekit_power_t;
+    type modemmanager_t;
+    type fwupd_t;
+    type dri_device_t;
+    type var_lib_t;
+    type xdm_t;
+    type pcscd_var_run_t;
+    type tmpfs_t;
+    type tmp_t;
+    type avahi_t;
+    type systemd_userdbd_runtime_t;
+    type abrt_dump_oops_t;
+    type init_var_run_t;
+    type policykit_t;
+    type unconfined_t;
+    type geoclue_t;
+    type dma_device_t;
+    type thumb_home_t;
+    type gssproxy_t;
+    type systemd_homed_t;
+    type systemd_logind_t;
+    type config_home_t;
+    type system_dbusd_var_lib_t;
+    type mozilla_home_t;
+    type locate_t;
+    type user_tty_device_t;
+    type udev_var_run_t;
+    type unconfined_service_t;
+    type etc_t;
+    type user_home_t;
+    type root_t;
+    type cupsd_t;
+    type sysfs_t;
+    type system_dbusd_var_run_t;
+    type fs_t;
+    type systemd_nsresourced_t;
+    class dir { add_name create getattr open read relabelfrom relabelto remove_name rmdir search setattr watch write };
+    class unix_stream_socket connectto;
+    class file { create execute getattr link lock map open read relabelfrom relabelto rename setattr unlink watch write };
+    class sock_file { create getattr rename setattr unlink write };
+    class process { execmem getattr setrlimit setsched signull };
+    class lnk_file { getattr read };
+    class cap_userns sys_ptrace;
+    class netlink_kobject_uevent_socket { bind create getattr getopt setopt };
+    class unix_dgram_socket create;
+    class chr_file { append getattr ioctl map open read write };
+    class filesystem { associate getattr };
+    class blk_file getattr;
+    type user_devpts_t;
+    type init_t;
+    type systemd_logind_t;
+    type unconfined_t;
+    type chkpwd_t;
+    type policykit_t;
+    type policykit_auth_t;
+    type user_home_dir_t;
+    class capability net_admin;
+    class process { noatsecure rlimitinh siginh };
+    class netlink_kobject_uevent_socket read;
+    class file unlink;
+    class chr_file { read write };
+    type system_dbusd_t;
+	class dbus send_msg;
+    type systemd_hostnamed_t;
+	type systemd_logind_t;
+	type mount_var_run_t;
+	class dbus send_msg;
+	class file watch;
+    	type cert_t;
+	type proc_t;
+	type passwd_file_t;
+	type init_var_run_t;
+	type etc_t;
+	type thumb_home_t;
+	type urandom_device_t;
+	type sysfs_t;
+	type net_conf_t;
+	type user_devpts_t;
+	type user_tmp_t;
+	type pcscd_var_run_t;
+	type mozilla_home_t;
+	type udev_var_run_t;
+	type samba_share_t;
+	type mount_var_run_t;
+	type fs_t;
+	class dir { getattr read remove_name search setattr watch };
+	class lnk_file { create read };
+	class file read;
+	class filesystem getattr;
+	class chr_file { append read write };
+	class unix_dgram_socket { getopt setopt };
+	class netlink_route_socket create;
+	class udp_socket create;
+    	type sysfs_t;
+type user_tmp_t;
+	type mozilla_home_t;
+	class file getattr;
+	class dir { create rmdir };
+}
+
+attribute secure_files;
+
+# Type definitions
+type secure_app_t;
+type secure_app_exec_t;
+type secure_app_data_t;
+
+typeattribute secure_app_t secure_files;
+
+# Domain declarations
+role system_r types secure_app_t;
+role unconfined_r types secure_app_t;
+
+domain_type(secure_app_t);
+domain_entry_file(secure_app_t, secure_app_exec_t);
+
+# Transitions
+type_transition { unconfined_t sysadm_t } secure_app_exec_t:process secure_app_t;
+
+# Allow domain transitions
+allow unconfined_t secure_app_t:process transition;
+allow sysadm_t secure_app_t:process transition;
+allow user_t secure_app_t:process transition;
+
+# Entry point permissions
+allow secure_app_t secure_app_exec_t:file { getattr read execute entrypoint };
+
+# Basic process permissions
+allow secure_app_t self:process { fork signal_perms setfscreate noatsecure setexec transition };
+allow secure_app_t self:fifo_file rw_fifo_file_perms;
+allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
+allow secure_app_t self:process { execmem setrlimit setsched signull getattr };
+allow secure_app_t self:cap_userns sys_ptrace;
+allow secure_app_t self:netlink_kobject_uevent_socket { bind create getattr getopt setopt read };
+allow secure_app_t self:unix_dgram_socket create;
+
+# Filesystem permissions
+allow secure_app_t fs_t:filesystem associate;
+
+# secure_app_data_t access permissions
+allow secure_app_t secure_app_data_t:dir { add_name create getattr open read remove_name search setattr write };
+allow secure_app_t secure_app_data_t:file { append create getattr open read rename setattr unlink write };
+
+# Execution permissions
+allow secure_app_t shell_exec_t:file { read execute map };
+allow secure_app_t bin_t:file { execute getattr read execute_no_trans map };
+allow secure_app_t lib_t:file { execute getattr read };
+
+# Device and user interface access
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
+allow secure_app_t proc_t:file { read getattr open };
+allow secure_app_t sysfs_t:dir { getattr read };
+allow secure_app_t sysfs_t:file { read open };
+allow secure_app_t sysfs_t:lnk_file read;
+
+# Home directory permissions
+allow secure_app_t user_home_dir_t:dir { search getattr open read write watch add_name remove_name };
+allow secure_app_t user_home_t:dir { search getattr open read write watch add_name remove_name };
+allow secure_app_t user_home_t:file { execute create getattr read write open execute_no_trans open watch setattr unlink link };
+allow secure_app_t data_home_t:file { read write open getattr create setattr rename unlink };
+allow secure_app_t data_home_t:dir { add_name getattr open read remove_name search watch write };
+allow secure_app_t gconf_home_t:dir { search getattr read };
+allow secure_app_t home_cert_t:dir { getattr read };
+allow secure_app_t home_root_t:dir { read watch };
+allow secure_app_t user_home_dir_t:file { link open read watch write getattr unlink create };
+
+# Configuration and cache
+allow secure_app_t cache_home_t:dir { search getattr open read add_name remove_name create write };
+allow secure_app_t cache_home_t:file { open read getattr write map create lock unlink rename link setattr };
+allow secure_app_t config_home_t:dir { search getattr open read add_name remove_name create write watch };
+allow secure_app_t config_home_t:file { create getattr link lock map open read rename setattr unlink watch write };
+allow secure_app_t cache_home_t:sock_file write;
+
+# Temporary files
+allow secure_app_t tmp_t:dir { write add_name create remove_name read rmdir setattr open };
+allow secure_app_t tmp_t:file { create open write read getattr unlink link map };
+allow secure_app_t tmp_t:sock_file { create getattr setattr unlink rename write };
+allow secure_app_t user_tmp_t:dir { search getattr open read add_name create write watch remove_name setattr};
+allow secure_app_t user_tmp_t:file { open read write create unlink map };
+allow secure_app_t user_tmp_t:sock_file { write create rename getattr setattr unlink };
+allow secure_app_t tmpfs_t:file { write read getattr map };
+allow secure_app_t user_tmp_t:lnk_file { create unlink };
+
+# D-Bus communication
+allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
+allow secure_app_t system_dbusd_t:unix_stream_socket connectto;
+allow secure_app_t system_dbusd_t:dbus send_msg;
+allow secure_app_t systemd_hostnamed_t:dbus send_msg;
+allow secure_app_t systemd_logind_t:dbus send_msg;
+allow secure_app_t session_dbusd_tmp_t:sock_file write;
+allow secure_app_t system_dbusd_var_lib_t:dir search;
+allow secure_app_t system_dbusd_var_lib_t:lnk_file read;
+allow secure_app_t system_dbusd_var_run_t:dir search;
+allow secure_app_t system_dbusd_var_run_t:sock_file write;
+
+# unconfined_t permissions
+allow unconfined_t secure_app_data_t:dir { relabelto getattr relabelfrom add_name open read remove_name rmdir search write };
+allow unconfined_t secure_app_data_t:file { relabelto getattr relabelfrom map open read unlink };
+
+allow secure_app_t unconfined_dbusd_t:dir { getattr search };
+allow secure_app_t unconfined_dbusd_t:file { open read };
+allow secure_app_t unconfined_dbusd_t:unix_stream_socket connectto;
+allow secure_app_t unconfined_service_t:dir { getattr search };
+allow secure_app_t unconfined_service_t:file { open read };
+allow secure_app_t unconfined_t:dir { getattr search };
+allow secure_app_t unconfined_t:file { read open };
+allow secure_app_t unconfined_t:process { getattr signull };
+allow secure_app_t unconfined_t:unix_stream_socket connectto;
+
+# Additional permissions
+
+allow secure_app_t fs_t:filesystem getattr;
+allow secure_app_data_t fs_t:filesystem associate;
+
+allow secure_app_t fixed_disk_device_t:blk_file getattr;
+allow secure_app_t fusefs_t:filesystem getattr;
+allow secure_app_t fusefs_t:dir { read search };
+allow secure_app_t mount_var_run_t:dir search;
+allow secure_app_t mount_var_run_t:file { getattr open read watch };
+
+allow secure_app_t user_fonts_cache_t:dir { search getattr open read };
+allow secure_app_t user_fonts_cache_t:file { open write read getattr lock map };
+allow secure_app_t user_fonts_t:dir { read search open getattr };
+
+allow secure_app_t init_var_run_t:dir search;
+allow secure_app_t init_t:dir { getattr search };
+allow secure_app_t init_t:file { open read };
+allow init_t chkpwd_t:process siginh;
+allow init_t unconfined_t:process siginh;
+
+
+allow secure_app_t passwd_file_t:file { read open getattr };
+allow secure_app_t urandom_device_t:chr_file write;
+allow secure_app_t etc_t:file map;
+allow secure_app_t samba_share_t:dir { getattr read };
+allow secure_app_t unlabeled_t:file getattr;
+allow secure_app_t usr_t:dir watch;
+
+allow secure_app_t pcscd_var_run_t:dir search;
+allow secure_app_t pcscd_t:unix_stream_socket connectto;
+allow secure_app_t pcscd_var_run_t:sock_file { getattr write };
+
+allow secure_app_t udev_var_run_t:dir search;
+allow secure_app_t udev_var_run_t:file { read open getattr };
+
+allow secure_app_t dma_device_t:chr_file { read write open getattr ioctl };
+allow secure_app_t dri_device_t:chr_file { read write open getattr ioctl map };
+
+allow secure_app_t var_lib_t:file { getattr open read map };
+allow secure_app_t var_lib_t:dir { read watch };
+allow secure_app_t var_lib_t:lnk_file { read getattr };
+
+
+allow secure_app_t mozilla_home_t:dir { search getattr read write add_name create };
+
+
+allow secure_app_t home_cert_t:dir { getattr read };
+
+allow secure_app_t ssh_home_t:dir { getattr read };
+allow secure_app_t audio_home_t:dir { getattr read };
+allow secure_app_t thumb_home_t:dir { getattr search };
+allow secure_app_t devpts_t:dir search;
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
+allow chkpwd_t user_devpts_t:chr_file { read write };
+
+allow secure_app_t systemd_userdbd_runtime_t:dir read;
+allow systemd_homed_t var_t:dir read;
+allow systemd_logind_t self:capability net_admin;
+
+#============= policykit_t ==============
+allow policykit_t policykit_auth_t:process { noatsecure rlimitinh siginh };
+
+allow secure_app_t xdm_t:dir { getattr search };
+allow secure_app_t xdm_t:file { open read };
+
+#============= secure_app_t ==============
+allow secure_app_t cert_t:dir { read search };
+allow secure_app_t etc_t:dir watch;
+allow secure_app_t fs_t:filesystem getattr;
+allow secure_app_t init_var_run_t:dir search;
+allow secure_app_t mount_var_run_t:dir search;
+allow secure_app_t net_conf_t:file read;
+allow secure_app_t net_conf_t:lnk_file read;
+allow secure_app_t passwd_file_t:file read;
+allow secure_app_t pcscd_var_run_t:dir search;
+allow secure_app_t proc_t:file read;
+allow secure_app_t samba_share_t:dir { getattr read };
+allow secure_app_t self:netlink_route_socket create;
+allow secure_app_t self:udp_socket create;
+allow secure_app_t self:unix_dgram_socket { getopt setopt };
+allow secure_app_t sysfs_t:dir read;
+allow secure_app_t sysfs_t:file read;
+allow secure_app_t sysfs_t:lnk_file { read getattr };
+allow secure_app_t thumb_home_t:dir { getattr search };
+allow secure_app_t udev_var_run_t:dir search;
+allow secure_app_t urandom_device_t:chr_file write;
+allow secure_app_t user_devpts_t:chr_file { append read write };
+allow secure_app_t user_tmp_t:dir { remove_name setattr };
+allow secure_app_t user_tmp_t:lnk_file create;
+allow secure_app_t sysfs_t:file getattr;
+allow secure_app_t user_tmp_t:dir rmdir;
+#!!!! This avc is allowed in the current policy
+allow secure_app_t sysfs_t:file getattr;
+
+#!!!! This avc is allowed in the current policy
+allow secure_app_t user_tmp_t:dir rmdir;
+
+allow secure_app_t mozilla_home_t:file { open write create getattr };
+###
+# Basic permissions
+allow secure_app_t fs_t:filesystem associate;
+allow secure_app_t self:process { fork signal_perms setfscreate noatsecure setexec transition };
+allow secure_app_t self:fifo_file rw_fifo_file_perms;
+allow secure_app_t self:unix_stream_socket create_stream_socket_perms;
+
+# Directory and file permissions
+allow secure_app_t secure_app_data_t:dir { add_name create getattr ioctl link open read remove_name search setattr write };
+allow secure_app_t secure_app_data_t:file { append create getattr ioctl link lock open read rename setattr unlink write };
+
+# Home directory operations
+allow secure_app_t user_home_dir_t:dir { add_name create remove_name write search };
+allow secure_app_t user_home_t:dir { search getattr };
+
+# Shell and binary execution permissions
+allow secure_app_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+allow secure_app_t bin_t:file { execute getattr read open execute_no_trans };
+allow secure_app_t user_devpts_t:chr_file { append getattr ioctl read write };
+
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans entrypoint };
+
+# Allowing shell interpreter to execute the script
+allow secure_app_t lib_t:file { execute getattr read open };
+
+# Process and system information access
+allow secure_app_t proc_t:dir read;
+allow secure_app_t proc_t:file read;
+allow secure_app_t sysfs_t:dir read;
+allow secure_app_t sysfs_t:file read;
+
+# Additional required permissions
+allow secure_app_t user_home_dir_t:dir getattr;
+allow secure_app_t secure_app_exec_t:file { execute getattr read execute_no_trans };
+allow secure_app_t shell_exec_t:file { execute getattr read execute_no_trans };
+allow secure_app_t lib_t:file { execute getattr read open };
+allow secure_app_t self:process setfscreate;
+allow secure_app_t self:capability dac_override;
+
+# Added shell script execution permissions
+allow secure_app_t user_home_t:file { execute getattr read open execute_no_trans };
+allow unconfined_t user_home_t:file { execute getattr read open execute_no_trans };
+
+#============= unconfined_t ==============
+allow unconfined_t secure_app_data_t:dir { getattr open read search };
+allow unconfined_t secure_app_data_t:file { getattr read };
+allow unconfined_t secure_app_t:dir relabelto;# Application execution permissions
+
+allow unconfined_t secure_app_t:file { execute relabelfrom relabelto };
+allow unconfined_t self:capability2 mac_admin;
+allow unconfined_t shell_exec_t:process transition;
+allow unconfined_t secure_app_exec_t:file { entrypoint getattr open read execute execute_no_trans };
+
+# Role transitions
+role_transition unconfined_r secure_app_exec_t:process system_r;
+allow unconfined_r system_r;
+
+# Additional shell execution permissions
+allow unconfined_t shell_exec_t:file { execute getattr read open execute_no_trans entrypoint };
+
+#============= sysadm_t ==============
+# ???????? ????? ??? sysadm_t - ??? ?????????? ?????????
+allow sysadm_t secure_app_data_t:dir { getattr open read search };
+allow sysadm_t secure_app_data_t:file { getattr read };
+allow sysadm_t secure_app_t:process transition;
